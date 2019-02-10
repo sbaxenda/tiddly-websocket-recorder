@@ -1,0 +1,11 @@
+address: echo.websocket.org
+created: 19700101000000000
+modified: 20190210043443522
+port: 443
+protocol: wss
+tags: ws-endpoint
+title: $:/WebSocketEndPoint
+type: text/vnd.tiddlywiki
+
+{{||WS EP definition template}}
+

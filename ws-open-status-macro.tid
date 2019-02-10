@@ -1,0 +1,15 @@
+created: 20190131142003709
+modified: 20190205130009743
+tags: $:/tags/Macro
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status-macro
+type: text/vnd.tiddlywiki
+
+\define getReadyStatusText(readyStatusCode)
+{{$:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status##$readyStatusCode$}}
+\end
+
+```
+\define getReadyStatusText(readyStatusCode)
+{{$:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status##$readyStatusCode$}}
+\end
+```

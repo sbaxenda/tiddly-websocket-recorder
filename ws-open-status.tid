@@ -1,0 +1,10 @@
+created: 20190131143711836
+modified: 20190131145719891
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status
+type: application/x-tiddler-dictionary
+
+0: CONNECTING
+1: OPEN
+2: CLOSING
+3: CLOSED
+
