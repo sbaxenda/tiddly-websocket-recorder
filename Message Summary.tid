@@ -1,0 +1,18 @@
+created: 20190126083420293
+modified: 20190205132409071
+tags: 
+title: Message Summary
+type: text/vnd.tiddlywiki
+
+<table>
+<thead>
+<th>Time</th><th>Name</th><th>Content</th><th>Direction</th><th>Endpoint</th><th>ws ix</th>
+</thead>
+<tbody>
+<$list filter="[has[websocketurl]!sort[created]]" >
+<tr>
+<td><$view field="created" template="0mm:0ss:0XXX" format="date"/></td><td>{{!!title}}</td><td>{{!!text}}</td><td align="center">{{!!direction}}</td><td>{{!!websocketurl}}</td><td> {{!!ws_connection_index}} </td>
+</tr>
+</$list>
+</tbody>
+</table>

@@ -1,0 +1,7 @@
+created: 20180128151353037
+modified: 20180128151426608
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/readme
+
+Plugin to configure websocket connections and record exchanged traffic as tiddlers.
+
+[[Source code|https://github.com/sbaxenda/tiddly-websocket-recorder]]

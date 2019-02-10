@@ -1,0 +1,33 @@
+created: 20190131061857519
+modified: 20190205144328348
+title: WS EP definition template
+type: text/vnd.tiddlywiki
+
+<$button>Connect
+<$action-connectwebsocket $server=<<currentTiddler>> />
+</$button>
+<$button>Disconnect
+<$action-disconnectwebsocket $server=<<currentTiddler>> />
+</$button>
+ &nbsp;&nbsp;&nbsp;
+
+<$wikify name="ws-readystate-text" text="<<getReadyStatusText  {{!!ws-readystate}}>>">
+
+
+|!Protocol |!Address |!Port |!State |!ws_index|
+| <$edit-text tiddler=<<currentTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<currentTiddler>> field="address"/> | <$edit-text tiddler=<<currentTiddler>> field="port" size=6/> |<<ws-readystate-text>>|{{!!ws_index}}|
+
+</$wikify>
+
+!!! Message Log
+
+<$button>
+Delete this ~WebSocket's message tiddlers!
+<$list filter="[ws_connection_index{!!ws_index}]" variable="tidToDelete">
+<$action-deletetiddler $tiddler=<<tidToDelete>>/>
+</$list>
+</$button>
+
+<<list-links filter:[ws_connection_index{!!ws_index}!sort[created]] >>
+
+
