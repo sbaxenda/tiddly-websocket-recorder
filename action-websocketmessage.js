@@ -5,7 +5,7 @@ module-type: widget
 
   Action widget to send a websocket message to the endpoint defined by the $server parameter.
 
-  <$action-websocketmessage $server=tiddlerDefiningEndpointConnectedTo/ $type=MessageType $value=value/>
+  <$action-websocketmessage $server=tiddlerDefiningEndpointConnectedTo/ $type=message_type $value=value/>
 
   Any other key=value pairs will be added to the JSON message sent
 
@@ -16,7 +16,7 @@ module-type: widget
   sends:
 
   {
-  "messageType": "git",
+  "msg_type": "git",
   "value": "pull",
   "branch": foo
   }
@@ -80,8 +80,8 @@ module-type: widget
         // Create the empty message object
         var message = {};
         // Add in the message type and param, if they exist
-        message.messageType = this.type;
-        message.param = this.param;
+        message.msg_type = this.type;
+        message.value = this.param;
         // For any other attributes passed to the widget add them to the message as
         // key: value pairs
         $tw.utils.each(this.attributes,function(attribute,name) {
@@ -90,7 +90,7 @@ module-type: widget
 		    }
 	    });
         // We need a message type at a minimum to send anything
-        if (message.messageType) {
+        if (message.msg_type) {
 
             // ws_index field of server tiddler tracks the WS instance.
             var CurrentServerTiddler = $tw.wiki.getTiddler(this.server);
