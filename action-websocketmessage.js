@@ -1,7 +1,7 @@
 /*\
-  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-websocketmessage.js
-  type: application/javascript
-  module-type: widget
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-websocketmessage.js
+type: application/javascript
+module-type: widget
 
   Action widget to send a websocket message to the endpoint defined by the $server parameter.
 
@@ -23,7 +23,7 @@
 
   over the websocket connection defined by tiddler $:/WebSocketEndPoint
 
-  \*/
+\*/
 (function(){
 
     /*jslint node: true, browser: true */

@@ -15,7 +15,7 @@
 
   stores the websocket index in the $server ws-index field
 
-  \*/
+\*/
 (function(){
 
     /*jslint node: true, browser: true */

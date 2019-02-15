@@ -1,7 +1,7 @@
 /*\
-  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/BrowserMessageHandlers.js
-  type: application/javascript
-  module-type: startup
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/BrowserMessageHandlers.js
+type: application/javascript
+module-type: startup
 
   This handles messages sent to the browser.
 
@@ -22,7 +22,7 @@
   to close the function that wraps the contents.
   Also change the title of the tiddler in the second line of the file, otherwise
   it will overwrite this file.
-  \*/
+\*/
 (function () {
 
     /*jslint node: true, browser: true */

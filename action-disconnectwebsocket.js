@@ -13,7 +13,7 @@
 
   disconnects a websocket connection at endpoint defined in $server tiddlers 'protocol'://'address':'port' fields
 
-  \*/
+\*/
 (function(){
 
     /*jslint node: true, browser: true */
