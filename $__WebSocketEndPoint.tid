@@ -1,11 +1,9 @@
-address: echo.websocket.org
 created: 19700101000000000
-modified: 20190210043443522
-port: 443
-protocol: wss
+modified: 20190216153526684
+revision: 75
+state-tiddler: WS Endpoint State-855923192
 tags: ws-endpoint
 title: $:/WebSocketEndPoint
 type: text/vnd.tiddlywiki
 
 {{||WS EP definition template}}
-
