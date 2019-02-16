@@ -1,20 +1,21 @@
 created: 20190204144353456
-modified: 20190205141023241
+modified: 20190216151502021
+revision: 2
 tags: message-generator
 title: Generate messages (over $:/WebSocketEndPoint)
 type: text/vnd.tiddlywiki
 
 <$button>
 $type='test'
-<$action-websocketmessage $server='$:/WebSocketEndPoint' $type='test'/>
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='test'/>
 </$button>
  <$button>
 $type=git 
-<$action-websocketmessage  $server='$:/WebSocketEndPoint' $type=git $param=pull branch=foo/>
+<$action-websocketmessage  $server={{$:/WebSocketEndPoint!!state-tiddler}} $type=git $param=pull branch=foo/>
 </$button> <$button>
 $type='testsjb' eric=howzat
-<$action-websocketmessage  $server='$:/WebSocketEndPoint' $type='testsjb' eric=howzat/>
+<$action-websocketmessage  $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='testsjb' eric=howzat/>
 </$button> <$button>
 big message - $:/HistoryList
-<$action-websocketmessage $server='$:/WebSocketEndPoint' $type='bigtype' data={{$:/HistoryList}}/>
+<$action-websocketmessage  $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='bigtype' data={{$:/HistoryList}}/>
 </$button>{{big-message-times-many}}

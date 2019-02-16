@@ -1,33 +1,55 @@
 created: 20190131061857519
-modified: 20190205144328348
+modified: 20190216150758674
+revision: 106
 title: WS EP definition template
 type: text/vnd.tiddlywiki
 
+<$set name="stateTiddler" value=<<qualify 'WS Endpoint State' >> >
+<$set name="wsIx" tiddler=<<stateTiddler>> field="ws_index">
+<$set name="rsVal" tiddler=<<stateTiddler>> field="ws-readystate">
+<$set name="wsProtocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="wsAddress" tiddler=<<stateTiddler>> field="address">
+
+
 <$button>Connect
-<$action-connectwebsocket $server=<<currentTiddler>> />
+<$action-setfield state-tiddler=<<stateTiddler>> />
+<$action-setfield $tiddler=<<stateTiddler>> end-point=<<currentTiddler>> />
+<$action-connectwebsocket $server=<<stateTiddler>> />
 </$button>
 <$button>Disconnect
-<$action-disconnectwebsocket $server=<<currentTiddler>> />
+<$action-disconnectwebsocket $server=<<stateTiddler>> />
 </$button>
  &nbsp;&nbsp;&nbsp;
 
-<$wikify name="ws-readystate-text" text="<<getReadyStatusText  {{!!ws-readystate}}>>">
-
 
 |!Protocol |!Address |!Port |!State |!ws_index|
-| <$edit-text tiddler=<<currentTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<currentTiddler>> field="address"/> | <$edit-text tiddler=<<currentTiddler>> field="port" size=6/> |<<ws-readystate-text>>|{{!!ws_index}}|
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> |<$macrocall $name="getReadyStatusText" readyStatusCode =<<rsVal>> /> | <<wsIx>> |
 
-</$wikify>
+<$wikify name="urlFilterValue" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]]" >
 
-!!! Message Log
+<$wikify name="urlFilterValueSorted" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]!sort[created]]" >
+
 
 <$button>
-Delete this ~WebSocket's message tiddlers!
-<$list filter="[ws_connection_index{!!ws_index}]" variable="tidToDelete">
+Delete message tiddlers
+<$list filter=<<urlFilterValue>> variable="tidToDelete">
 <$action-deletetiddler $tiddler=<<tidToDelete>>/>
 </$list>
 </$button>
 
-<<list-links filter:[ws_connection_index{!!ws_index}!sort[created]] >>
+!!! Message Log
 
+<$list filter=<<urlFilterValueSorted>> >
+<$link to=<<currentTiddler>>><<currentTiddler>></$link><br/>
+</$list>
+
+
+</$wikify>
+</$wikify>
+
+</$set>
+</$set>
+</$set>
+</$set>
+</$set>
 
