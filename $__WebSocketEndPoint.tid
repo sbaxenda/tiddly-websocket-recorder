@@ -1,9 +1,11 @@
 created: 19700101000000000
-modified: 20190216153526684
-revision: 75
-state-tiddler: WS Endpoint State-855923192
+modified: 20190217072517046
+revision: 81
+state-tiddler: WS-Endpoint-State-855923192
 tags: ws-endpoint
 title: $:/WebSocketEndPoint
 type: text/vnd.tiddlywiki
 
 {{||WS EP definition template}}
+
+<<urlMessageLog {{!!state-tiddler}}>>

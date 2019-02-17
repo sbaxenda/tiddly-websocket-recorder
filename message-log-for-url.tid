@@ -1,0 +1,44 @@
+created: 20190217065655332
+modified: 20190217072235844
+tags: $:/tags/Macro
+title: message-log-for-url
+
+\define urlMessageLog(wsStateTiddler)
+
+<$set name="stateTiddler" value=$wsStateTiddler$ >
+<$set name="wsIx" tiddler=<<stateTiddler>> field="ws_index">
+<$set name="rsVal" tiddler=<<stateTiddler>> field="ws-readystate">
+<$set name="wsProtocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="wsAddress" tiddler=<<stateTiddler>> field="address">
+
+<$wikify name="urlFilterValue" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]]" >
+
+<$wikify name="urlFilterValueSorted" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]!sort[created]]" >
+
+
+<$button>
+Delete message tiddlers
+<$list filter=<<urlFilterValue>> variable="tidToDelete">
+<$action-deletetiddler $tiddler=<<tidToDelete>>/>
+</$list>
+</$button>
+
+!!! Message Log
+
+<$list filter=<<urlFilterValueSorted>> >
+<$link to=<<currentTiddler>>><<currentTiddler>></$link><br/>
+</$list>
+
+
+</$wikify>
+</$wikify>
+
+</$set>
+</$set>
+</$set>
+</$set>
+</$set>
+\end
+
+<$macrocall $name="urlMessageLog" wsStateTiddler=WS-Endpoint-State-855923192 />
+

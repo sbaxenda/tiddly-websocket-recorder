@@ -1,15 +1,10 @@
 created: 20190131061857519
-modified: 20190216150758674
-revision: 106
+modified: 20190217072451631
+revision: 107
 title: WS EP definition template
 type: text/vnd.tiddlywiki
 
-<$set name="stateTiddler" value=<<qualify 'WS Endpoint State' >> >
-<$set name="wsIx" tiddler=<<stateTiddler>> field="ws_index">
-<$set name="rsVal" tiddler=<<stateTiddler>> field="ws-readystate">
-<$set name="wsProtocol" tiddler=<<stateTiddler>> field="protocol">
-<$set name="wsAddress" tiddler=<<stateTiddler>> field="address">
-
+<$set name="stateTiddler" value=<<qualify 'WS-Endpoint-State' >> >
 
 <$button>Connect
 <$action-setfield state-tiddler=<<stateTiddler>> />
@@ -23,33 +18,8 @@ type: text/vnd.tiddlywiki
 
 
 |!Protocol |!Address |!Port |!State |!ws_index|
-| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> |<$macrocall $name="getReadyStatusText" readyStatusCode =<<rsVal>> /> | <<wsIx>> |
-
-<$wikify name="urlFilterValue" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]]" >
-
-<$wikify name="urlFilterValueSorted" text="[has[websocketurl]websocketurl[<<wsProtocol>>:<$text text='//'/><<wsAddress>>/]!sort[created]]" >
-
-
-<$button>
-Delete message tiddlers
-<$list filter=<<urlFilterValue>> variable="tidToDelete">
-<$action-deletetiddler $tiddler=<<tidToDelete>>/>
-</$list>
-</$button>
-
-!!! Message Log
-
-<$list filter=<<urlFilterValueSorted>> >
-<$link to=<<currentTiddler>>><<currentTiddler>></$link><br/>
-</$list>
-
-
-</$wikify>
-</$wikify>
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> | <$transclude tiddler=<<stateTiddler>> field="ws_index" /> |
 
 </$set>
-</$set>
-</$set>
-</$set>
-</$set>
+
 
