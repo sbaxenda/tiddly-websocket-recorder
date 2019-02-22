@@ -1,5 +1,5 @@
 /*\
-  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-disconnectwebcocket.js
+  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-disconnectwebsocket.js
   type: application/javascript
   module-type: widget
 

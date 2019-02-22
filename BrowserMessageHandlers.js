@@ -43,7 +43,7 @@ module-type: startup
         var tiddlerFields = {};
         tiddlerFields.type = "application/json";
         tiddlerFields.direction = direction;
-        tiddlerFields.text = JSON.stringify(message);
+        tiddlerFields.text = JSON.stringify(message, null, 2);
         var timeNow = $tw.utils.formatDateString(new Date(), "[UTC]YYYY0MM0DD0hh0mm0ssXXX");
         tiddlerFields.created = timeNow;
         tiddlerFields.modified = timeNow;

@@ -1,5 +1,5 @@
 /*\
-  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-connectwebcocket.js
+  title: $:/plugins/sbaxenda/tiddly-websocket-recorder/action-connectwebsocket.js
   type: application/javascript
   module-type: widget
 
@@ -108,7 +108,7 @@
             var IPAddress = ServerTiddler.fields.address;
             var PortNo = ServerTiddler.fields.port;
             var WSProtocol = ServerTiddler.fields.protocol;
-            console.log(`connecting to ${WSProtocol}://${IPAddress}:${PortNo}`);
+            //console.log(`connecting to ${WSProtocol}://${IPAddress}:${PortNo}`);
             $tw.socket = $tw.socket || [];
             var newSocketIx = getSocketIx();
             $tw.socket[newSocketIx] = new WebSocket(`${WSProtocol}://${IPAddress}:${PortNo}`);
@@ -140,15 +140,19 @@
         */
         var parseMessage = function(ws_index, event) {
             var eventData = JSON.parse(event.data);
-            console.log("Event data: ",event.data)
-            if (eventData.type) {
-                if (typeof $tw.browserMessageHandlers[eventData.type] === 'function') {
-                    console.log(Object.keys($tw.browserMessageHandlers))
-                    $tw.browserMessageHandlers[eventData.type](ws_index, eventData);
+            //console.log("Event data: ",event.data);
+            if (eventData.msg_type) {
+                if (typeof $tw.browserMessageHandlers[eventData.msg_type] === 'function') {
+                    //console.log(Object.keys($tw.browserMessageHandlers));
+                    $tw.browserMessageHandlers[eventData.msg_type](ws_index, eventData);
                 }
+              else {
+                  //console.log("unrecognised msg_type-> treating as generic:",eventData);
+                  $tw.browserMessageHandlers.generic(ws_index, eventData);
+              }
             }
             else {
-                console.log("unrecognised message -> treating as generic:",eventData)
+                //console.log("unrecognised message -> treating as generic:",eventData);
                 $tw.browserMessageHandlers.generic(ws_index, eventData);
             }
         }
