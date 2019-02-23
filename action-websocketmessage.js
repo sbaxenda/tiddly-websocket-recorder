@@ -33,6 +33,7 @@ module-type: widget
     var Widget = require("$:/core/modules/widgets/widget.js").widget;
 
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
+    $tw.browserMessageSendLogger = $tw.browserMessageSendLogger || {};
 
 
     var ActionWebSocketMessage = function(parseTreeNode,options) {
@@ -101,8 +102,15 @@ module-type: widget
 
                 // Send the message
                 $tw.socket[socketIx].send(JSON.stringify(message));
-                $tw.browserMessageUtil.logMessageToTiddler(socketIx, message, "to EP");
 
+                // User defined logging if defined for msg_type, else generic
+                if (typeof $tw.browserMessageSendLogger[message.msg_type] === 'function') {
+                  $tw.browserMessageSendLogger[message.msg_type] (socketIx, message);
+                }
+                else
+                {
+                  $tw.browserMessageUtil.logMessageToTiddler(socketIx, message, "to EP");
+                }
             }
         }
 
