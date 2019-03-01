@@ -1,5 +1,5 @@
 created: 20190131061857519
-modified: 20190217072451631
+modified: 20190301122620266
 revision: 107
 title: WS EP definition template
 type: text/vnd.tiddlywiki
@@ -16,10 +16,10 @@ type: text/vnd.tiddlywiki
 </$button>
  &nbsp;&nbsp;&nbsp;
 
+<$set tiddler=<<stateTiddler>> field="ws-readystate" name="ws-readystate" >
 
-|!Protocol |!Address |!Port |!State |!ws_index|
-| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> | <$transclude tiddler=<<stateTiddler>> field="ws_index" /> |
+|!Protocol |!Address |!Port |!ws_index|!State|
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="ws_index" /> |<$transclude tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status" index= <<ws-readystate>> />  |
 
 </$set>
-
-
+</$set>
