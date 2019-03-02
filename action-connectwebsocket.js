@@ -78,6 +78,16 @@
     ActionConnectWebSocket.prototype.invokeAction = function(triggeringWidget,event) {
 
         function updateWebSocketReadyState(socketReadyState, newSocketIx) {
+
+            function getWebSocketStateString(state) {
+                const stateToString = {
+                    0: "Connecting",
+                    1: "Open",
+                    2: "Closing",
+                    3: "Closed"
+                };
+                return stateToString[state];
+            }
             var CurrentServerTiddler = $tw.wiki.getTiddler(self.server);
             var extraFields = {};
             var socketIx;
@@ -89,7 +99,8 @@
                 socketIx = CurrentServerTiddler.fields.ws_index;
             }
 			var updatedServerTiddler = new $tw.Tiddler(CurrentServerTiddler, 
-                                                       {"ws-readystate": $tw.socket[socketIx].readyState},
+                                                       {"ws-readystate": getWebSocketStateString(
+                                                           $tw.socket[socketIx].readyState)},
                                                        extraFields,
                                                        $tw.wiki.getModificationFields());
 			$tw.wiki.addTiddler(updatedServerTiddler);

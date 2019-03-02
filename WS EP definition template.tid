@@ -16,10 +16,7 @@ type: text/vnd.tiddlywiki
 </$button>
  &nbsp;&nbsp;&nbsp;
 
-<$set tiddler=<<stateTiddler>> field="ws-readystate" name="ws-readystate" >
-
 |!Protocol |!Address |!Port |!ws_index|!State|
-| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="ws_index" /> |<$transclude tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/ws-open-status" index= <<ws-readystate>> />  |
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler >>field="address"/> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="ws_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
 
-</$set>
 </$set>
