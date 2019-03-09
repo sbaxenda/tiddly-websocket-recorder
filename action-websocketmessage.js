@@ -83,7 +83,13 @@ module-type: widget
         // Add in the message type and value, if they exist
         message.msg_type = this.type;
         let value = this.value;
-        let parsedValue = JSON.parse(this.value);
+        let parsedValue;
+        if (value !== undefined) {
+            parsedValue = JSON.parse(this.value);
+        }
+        else {
+            parsedValue = undefined;
+        }
         //console.log(`value = ${value}, parsedValue => ${parsedValue}`);
         message.value = parsedValue;
         // For any other attributes passed to the widget add them to the message as
