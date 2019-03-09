@@ -11,7 +11,7 @@ module-type: widget
 
   ex:
 
-  <$action-websocketmessage $server="$:/WebSocketEndPoint" $type=git $param=pull branch=foo/>
+  <$action-websocketmessage $server="$:/WebSocketEndPoint" $type=git $value=pull branch=foo/>
 
   sends:
 
@@ -59,7 +59,7 @@ module-type: widget
     ActionWebSocketMessage.prototype.execute = function() {
 	    this.server = this.getAttribute('$server', undefined);
 	    this.type = this.getAttribute('$type', undefined);
-	    this.param = this.getAttribute('$param', undefined);
+	    this.value = this.getAttribute('$value', undefined);
     };
 
     /*
@@ -80,9 +80,12 @@ module-type: widget
     ActionWebSocketMessage.prototype.invokeAction = function(triggeringWidget,event) {
         // Create the empty message object
         var message = {};
-        // Add in the message type and param, if they exist
+        // Add in the message type and value, if they exist
         message.msg_type = this.type;
-        message.value = this.param;
+        let value = this.value;
+        let parsedValue = JSON.parse(this.value);
+        //console.log(`value = ${value}, parsedValue => ${parsedValue}`);
+        message.value = parsedValue;
         // For any other attributes passed to the widget add them to the message as
         // key: value pairs
         $tw.utils.each(this.attributes,function(attribute,name) {
