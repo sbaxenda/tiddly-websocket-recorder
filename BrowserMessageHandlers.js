@@ -38,6 +38,11 @@ module-type: startup
     $tw.browserMessageHandlers = $tw.browserMessageHandlers || {};
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
 
+    // copy in tiddly-websocket-recorder options settings
+    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
+    var messageTypeKeyName = optionsTiddler.fields['option-message-type-key-name'];
+    $tw.browserMessageUtil.options = {messageTypeKey: messageTypeKeyName };
+
     $tw.browserMessageUtil.logMessageToTiddler = function(websocket_ix, message, direction) {
 
         var tiddlerFields = {};

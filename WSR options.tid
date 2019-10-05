@@ -1,0 +1,11 @@
+caption: Tiddly WebSocket Recorder options
+created: 20191005080439273
+modified: 20191005082544273
+tags: $:/tags/ControlPanel
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/WSR options
+type: application/x-tiddler
+
+| !Option |!Value|
+|! Message Type key |<$edit-text tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options" field="option-message-type-key-name" size=12 /> |
+
+[[defn|WSR options]] | state tiddler -> $:/plugins/sbaxenda/tiddly-websocket-recorder/base-options

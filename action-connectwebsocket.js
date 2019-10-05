@@ -29,6 +29,7 @@
     };
 
     $tw.browserMessageHandlers = $tw.browserMessageHandlers || {};
+    $tw.browserMessageUtil = $tw.browserMessageUtil || {};
 
     function makeCounter() {
         let count = 0;
@@ -151,14 +152,15 @@
         */
         var parseMessage = function(ws_index, event) {
             var eventData = JSON.parse(event.data);
+            var msgTypeKey = $tw.browserMessageUtil.options.messageTypeKey;
             //console.log("Event data: ",event.data);
-            if (eventData.msg_type) {
-                if (typeof $tw.browserMessageHandlers[eventData.msg_type] === 'function') {
+            if (eventData[msgTypeKey]) {
+                if (typeof $tw.browserMessageHandlers[eventData[msgTypeKey]] === 'function') {
                     //console.log(Object.keys($tw.browserMessageHandlers));
-                    $tw.browserMessageHandlers[eventData.msg_type](ws_index, eventData);
+                    $tw.browserMessageHandlers[eventData[msgTypeKey]](ws_index, eventData);
                 }
               else {
-                  //console.log("unrecognised msg_type-> treating as generic:",eventData);
+                  //console.log("unrecognised messageType-> treating as generic:",eventData);
                   $tw.browserMessageHandlers.generic(ws_index, eventData);
               }
             }

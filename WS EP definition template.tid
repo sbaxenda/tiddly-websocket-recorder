@@ -4,7 +4,7 @@ revision: 107
 title: WS EP definition template
 type: text/vnd.tiddlywiki
 
-<$set name="stateTiddler" value=<<qualify 'WS-Endpoint-State' >> >
+<$set name="stateTiddler" value=<<qualify '$:/WS-Endpoint-State' >> >
 
 <$button>Connect
 <$action-setfield state-tiddler=<<stateTiddler>> />

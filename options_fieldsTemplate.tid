@@ -1,0 +1,7 @@
+created: 20190505090137811
+modified: 20191005081231989
+tags: 
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/options/fieldsTemplate
+type: text/vnd.tiddlywiki
+
+($name$ = $value$),

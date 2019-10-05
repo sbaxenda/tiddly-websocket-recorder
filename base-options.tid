@@ -1,0 +1,7 @@
+created: 20191005080912001
+option-message-type-key-name: messageType
+modified: 20191005081240011
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/base-options
+type: text/vnd.tiddlywiki
+
+<$fields template={{$:/plugins/sbaxenda/tiddly-websocket-recorder/options/fieldsTemplate}} exclude="created modified tags text title" />

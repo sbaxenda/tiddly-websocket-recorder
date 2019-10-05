@@ -16,7 +16,7 @@ module-type: widget
   sends:
 
   {
-  "msg_type": "git",
+  "messageType": "git",
   "value": "pull",
   "branch": foo
   }
@@ -80,8 +80,10 @@ module-type: widget
     ActionWebSocketMessage.prototype.invokeAction = function(triggeringWidget,event) {
         // Create the empty message object
         var message = {};
+        var msgTypeKey = $tw.browserMessageUtil.options.messageTypeKey;
+
         // Add in the message type and value, if they exist
-        message.msg_type = this.type;
+        message[msgTypeKey] = this.type;
         let value = this.value;
         let parsedValue;
         if (value !== undefined) {
@@ -100,7 +102,7 @@ module-type: widget
 		    }
 	    });
         // We need a message type at a minimum to send anything
-        if (message.msg_type) {
+        if (message[msgTypeKey]) {
 
             // ws_index field of server tiddler tracks the WS instance.
             var CurrentServerTiddler = $tw.wiki.getTiddler(this.server);
@@ -112,9 +114,9 @@ module-type: widget
                 // Send the message
                 $tw.socket[socketIx].send(JSON.stringify(message));
 
-                // User defined logging if defined for msg_type, else generic
-                if (typeof $tw.browserMessageSendLogger[message.msg_type] === 'function') {
-                  $tw.browserMessageSendLogger[message.msg_type] (socketIx, message);
+                // User defined logging if defined for messageType, else generic
+                if (typeof $tw.browserMessageSendLogger[message[msgTypeKey]] === 'function') {
+                  $tw.browserMessageSendLogger[message[msgTypeKey]] (socketIx, message);
                 }
                 else
                 {
