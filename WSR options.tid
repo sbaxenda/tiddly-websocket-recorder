@@ -8,4 +8,4 @@ type: application/x-tiddler
 | !Option |!Value|
 |! Message Type key |<$edit-text tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options" field="option-message-type-key-name" size=12 /> |
 
-[[defn|WSR options]] | state tiddler -> $:/plugins/sbaxenda/tiddly-websocket-recorder/base-options
+[[defn|$:/plugins/sbaxenda/tiddly-websocket-recorder/WSR options]] | state tiddler -> $:/plugins/sbaxenda/tiddly-websocket-recorder/base-options
