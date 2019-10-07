@@ -1,0 +1,39 @@
+created: 20191007122454810
+modified: 20191007124434889
+revision: 0
+tags: 
+title: WebSocket Client Summary
+type: text/vnd.tiddlywiki
+
+<table>
+<tr>
+<th>protocol</th>
+<th>address</th>
+<th>port</th>
+<th>index</th>
+<th>state</th>
+<th>control</th>
+<th>endpoint</th>
+</tr>
+<tbody>
+<$list filter="[tag[ws-endpoint]]">
+<$set name="stateTiddler" value={{!!state-tiddler}}>
+<$set name="alias" value={{!!alias}} emptyValue="details">
+<tr>
+<td align="center"><$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> </td><td><$edit-text tiddler=<<stateTiddler >>field="address" size=20/></td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Connect
+<$action-setfield state-tiddler=<<stateTiddler>> />
+<$action-setfield $tiddler=<<stateTiddler>> end-point=<<currentTiddler>> />
+<$action-connectwebsocket $server=<<stateTiddler>> />
+</$button> <$button>Disconnect
+<$action-disconnectwebsocket $server=<<stateTiddler>> />
+</$button></td><td align="center"><$link to={{!!title}}><<alias>></$link></td>
+</tr>
+
+</$set>
+</$set>
+
+</$list>
+</tbody>
+</table>
+
+[[tidy up|Clear WebSocket Client States]]

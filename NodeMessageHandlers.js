@@ -27,11 +27,25 @@ module-type: startup
         console.log(data);
         console.log("<--");
     }
-
+    /*
+      Echo the received message back to client websocket
+    */
     $tw.nodeMessageHandlers.echo = function(data) {
-        console.log("nodeMessageHandlers.echo -->");
-        $tw.connections[0].socket.send(JSON.stringify(data));
+        let clientIx = data.source_connection;
+        console.log("nodeMessageHandlers.echo, clientIx:", clientIx, " -->");
+        $tw.connections[clientIx].socket.send(JSON.stringify(data));
         console.log(data);
+        console.log("<--");
+    }
+
+    /*
+      Report client connections
+    */
+    $tw.nodeMessageHandlers.getClientConnections = function(data) {
+        let clientIx = data.source_connection;
+        console.log("nodeMessageHandlers.getClientConnections, clientIx:", clientIx, " -->");
+        $tw.connections[clientIx].socket.send(JSON.stringify($tw.connections));
+        console.log($tw.connections);
         console.log("<--");
     }
 
