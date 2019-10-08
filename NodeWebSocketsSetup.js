@@ -21,7 +21,7 @@ module-type: startup
     var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
     var enableWebSocketServer = optionsTiddler.fields['option-enable-websocket-server'];
     var SERVER_PORT = optionsTiddler.fields['option-monitor-websocket-server-port'];
-    $tw.nodeOptions = {enableWSS: enableWebSocketServer};
+    //$tw.nodeOptions = {enableWSS: enableWebSocketServer};
 
 
     // require the websockets module if we are running node

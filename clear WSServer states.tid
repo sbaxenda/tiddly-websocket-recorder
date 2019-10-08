@@ -1,5 +1,5 @@
 created: 20191008084451035
-modified: 20191008084528677
+modified: 20191008154456269
 revision: 0
 tags: 
 title: clear WSServer states
@@ -8,7 +8,7 @@ type: text/vnd.tiddlywiki
 <$button>`Clear WSServer states:`<br/>
 <$list filter="[has[server]]">
 <<currentTiddler>> [for <$transclude field="server" />]<br/>
-<$action-setfield $field="ws_index" $value=""/>
+<$action-setfield $field="wss_index" $value=""/>
 <$action-setfield $field="ws-readystate" $value=""/>
 </$list>
 </$button>

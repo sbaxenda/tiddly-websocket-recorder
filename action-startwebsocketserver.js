@@ -22,7 +22,11 @@ module-type: widget
     /*global $tw: false */
     "use strict";
 
-    var enableWebSocketServer = $tw.nodeOptions['enableWSS'];
+    // copy in nodeWSS options from tiddly-websocket-recorder options settings
+    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
+    var enableWebSocketServer = optionsTiddler.fields['option-enable-websocket-server'];
+    var SERVER_PORT = optionsTiddler.fields['option-monitor-websocket-server-port'];
+    //var enableWebSocketServer = $tw.nodeOptions['enableWSS'];
 
     // require the websockets module if we are running node
     var WebSocketServer = ($tw.node && (enableWebSocketServer === "true")) ? require('ws').Server : undefined;

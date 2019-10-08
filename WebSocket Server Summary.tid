@@ -1,6 +1,6 @@
 created: 20191007130126214
-modified: 20191008084607688
-revision: 2
+modified: 20191008154349962
+revision: 0
 tags: [[in work]]
 title: WebSocket Server Summary
 type: text/vnd.tiddlywiki
@@ -24,18 +24,18 @@ type: text/vnd.tiddlywiki
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
-<td align="center"><$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
+<td align="center"><$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
 <$action-setfield state-tiddler=<<stateTiddler>> />
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocet_server" protocol=<<protocol>> port=<<port>> />
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> wsServerStateTiddler=<<stateTiddler>> />
 </$set>
 </$set>
 </$button> <$button>Stop
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocet_server" protocol=<<protocol>> port=<<port>> />
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> />
 </$set>
 </$set>
 </$button></td><td align="center"><$link to={{!!title}}><<alias>></$link></td>
