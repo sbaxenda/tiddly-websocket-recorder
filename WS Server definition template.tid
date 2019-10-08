@@ -1,5 +1,5 @@
 created: 20191008021755441
-modified: 20191008083128901
+modified: 20191008085252416
 revision: 0
 state-tiddler: $:/WS-Server-State-2054838151
 tags: [[in work]]
@@ -13,14 +13,14 @@ type: text/vnd.tiddlywiki
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocet_server" protocol=<<protocol>> port=<<port>> />
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> />
 </$set>
 </$set>
 </$button>
 <$button>Stop
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocet_server" protocol=<<protocol>> port=<<port>> />
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> />
 </$set>
 </$set>
 </$button>

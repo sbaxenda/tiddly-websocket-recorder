@@ -55,4 +55,19 @@ module-type: startup
         console.log("<-- sjb --");
     }
 
+    /*
+      WebSocket Server control messages
+    */
+    $tw.nodeMessageHandlers.start_websocket_server = function(data) {
+        console.log("nodeMessageHandlers.start_websocket_server -->");
+        console.log(data);
+        console.log("<--");
+    }
+
+    $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
+        console.log("nodeMessageHandlers.start_websocket_server -->");
+        console.log(data);
+        console.log("<--");
+    }
+
 })()
