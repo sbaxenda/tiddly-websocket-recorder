@@ -20,6 +20,7 @@ module-type: startup
     // copy in nodeWSS options from tiddly-websocket-recorder options settings
     var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
     var enableWebSocketServer = optionsTiddler.fields['option-enable-websocket-server'];
+    var SERVER_PORT = optionsTiddler.fields['option-monitor-websocket-server-port'];
     $tw.nodeOptions = {enableWSS: enableWebSocketServer};
 
 
@@ -49,7 +50,7 @@ module-type: startup
         $tw.wiki.addTiddler(new $tw.Tiddler({title: "$:/ServerIP", text: ipAddress}));
 
         // This is the port used by the web socket server
-        var SERVER_PORT = 8051;
+        //var SERVER_PORT = 8051;
         // Create the web socket server on the defined port
         $tw.wss = new WebSocketServer({port: SERVER_PORT});
         // Initialise the connections array
@@ -100,7 +101,7 @@ module-type: startup
                 console.log(e);
             }
         });
-        $tw.connections[Object.keys($tw.connections).length-1].socket.send(JSON.stringify({type: 'listTiddlers', source: 'handleConnection', client: client}));
+        $tw.connections[Object.keys($tw.connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS Monitor port', source: 'handleConnection', client: client}));
     }
 
     //module.exports = setup;
@@ -111,7 +112,7 @@ module-type: startup
         var testFunction = function() {
             if ($tw.connections[0]) {
                 if (typeof $tw.connections[0].socket.send === 'function') {
-                    $tw.connections[0].socket.send(JSON.stringify({type: "helloFromNodeWSS"}))
+                    $tw.connections[0].socket.send(JSON.stringify({type: "delayed .. helloFromNodeWSS Monitor port"}))
                 } else {
                     setTimeout(testFunction, 1000)
                 }
