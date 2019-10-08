@@ -17,8 +17,15 @@ module-type: startup
     /*global $tw: false */
     "use strict";
 
+    // copy in nodeWSS options from tiddly-websocket-recorder options settings
+    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
+    var enableWebSocketServer = optionsTiddler.fields['option-enable-websocket-server'];
+    $tw.nodeOptions = {enableWSS: enableWebSocketServer};
+
+
     // require the websockets module if we are running node
-    var WebSocketServer = $tw.node ? require('ws').Server : undefined;
+    var WebSocketServer = ($tw.node && (enableWebSocketServer === "true")) ? require('ws').Server : undefined;
+    console.log("WebSocketServer=", WebSocketServer);
     //var Git = $tw.node ? require('simple-git') : undefined;
     var fs = $tw.node ? require("fs"): undefined;
 
