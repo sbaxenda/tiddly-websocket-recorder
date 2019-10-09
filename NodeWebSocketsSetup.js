@@ -26,7 +26,6 @@ module-type: startup
 
     // require the websockets module if we are running node
     var WebSocketServer = ($tw.node && (enableWebSocketServer === "true")) ? require('ws').Server : undefined;
-    console.log("WebSocketServer=", WebSocketServer);
     //var Git = $tw.node ? require('simple-git') : undefined;
     var fs = $tw.node ? require("fs"): undefined;
 
