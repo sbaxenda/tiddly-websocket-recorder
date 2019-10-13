@@ -1,5 +1,5 @@
 created: 20191012070904163
-modified: 20191013060943228
+modified: 20191013074830736
 revision: 0
 tags: [[in work]]
 title: WS Server types
@@ -11,7 +11,7 @@ type: text/vnd.tiddlywiki
 <th>description</th>
 </tr>
 <tbody>
-<$list filter="[has[wss-server-type]sort[display-seq]]">
+<$list filter="[all[shadows+tiddlers]has[wss-server-type]sort[display-seq]]">
 <tr>
 <td>{{!!short-name}}</td>
 <td>{{!!description}}</td>
