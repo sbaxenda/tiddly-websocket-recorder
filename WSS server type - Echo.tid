@@ -1,0 +1,12 @@
+created: 20191013055731577
+description: returns messages to client sender unadulterated
+display-seq: 2
+modified: 20191013060909717
+revision: 0
+short-name: Echo
+tags: 
+title: WSS server type - Echo
+type: text/vnd.tiddlywiki
+wss-server-type: yes
+
+{{||WSS Server Type template}}

@@ -41,10 +41,17 @@ module-type: startup
     /*
       Report client connections
     */
-    $tw.nodeMessageHandlers.getClientConnections = function(data) {
+    $tw.nodeMessageHandlers.getMonitorClientConnections = function(data) {
         let clientIx = data.source_connection;
-        console.log("nodeMessageHandlers.getClientConnections, clientIx:", clientIx, " -->");
-        $tw.connections[clientIx].socket.send(JSON.stringify($tw.connections));
+        console.log("nodeMessageHandlers.getMonitorClientConnections, clientIx:", clientIx, " -->");
+        let response = {clientCount: $tw.connections.length, clients: []};
+        for (const connection of $tw.connections) {
+            let client = {};
+            client.active = connection.active;
+            client.socket = connection.socket;
+            response.clients.push(client);
+        }
+        $tw.connections[clientIx].socket.send(JSON.stringify(response));
         console.log($tw.connections);
         console.log("<--");
     }

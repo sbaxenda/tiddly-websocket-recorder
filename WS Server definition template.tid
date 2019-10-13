@@ -1,7 +1,6 @@
 created: 20191008021755441
-modified: 20191008085252416
+modified: 20191013071021836
 revision: 0
-state-tiddler: $:/WS-Server-State-2054838151
 tags: [[in work]]
 title: WS Server definition template
 type: text/vnd.tiddlywiki
@@ -13,7 +12,9 @@ type: text/vnd.tiddlywiki
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> />
+<$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+</$set>
 </$set>
 </$set>
 </$button>
@@ -26,7 +27,7 @@ type: text/vnd.tiddlywiki
 </$button>
  &nbsp;&nbsp;&nbsp;
 
-|!Protocol |!Port |!wss_index|!State|
-| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
+|!Protocol |!Port |!Server Type | !wss_index|!State|
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select wss type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
 
 </$set>

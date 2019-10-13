@@ -57,10 +57,11 @@ module-type: startup
             $tw.websocketServer[newServerIx] = new WebSocketServer({port: PortNo});
             $tw.websocketServer[newServerIx].on('connection', handleConnectionThisWebSocket(newServerIx));
             $tw.websocketServerConnections[newServerIx] = [];
+            let serverAddress = $tw.websocketServer[newServerIx].address();
 
 
             // Report success and new WSS index back to caller
-            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx}));
+            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress} ));
 
 
         } catch (e) {
@@ -104,5 +105,24 @@ module-type: startup
         console.log(data);
         console.log("<--");
     }
+
+    /*
+      Report client connections
+    */
+    $tw.nodeMessageHandlers.getServerClientConnections = function(data) {
+        let clientIx = data.source_connection;
+        console.log("nodeMessageHandlers.getServerClientConnections, clientIx:", clientIx, " -->");
+        let response = {clientCount: $tw.connections.length, clients: []};
+        for (const connection of $tw.connections) {
+            let client = {};
+            client.active = connection.active;
+            client.socket = connection.socket;
+            response.clients.push(client);
+        }
+        $tw.connections[clientIx].socket.send(JSON.stringify(response));
+        console.log($tw.connections);
+        console.log("<--");
+    }
+
 
 })()

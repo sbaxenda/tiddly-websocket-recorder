@@ -1,5 +1,5 @@
 created: 20190204144353456
-modified: 20191007133448936
+modified: 20191012070833693
 revision: 0
 tags: message-generator
 title: Generate messages (over $:/WebSocketEndPoint)
@@ -17,9 +17,11 @@ $type='echo'
 </$button>
 
 <$button>
-$type='getClientConnections'
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='getClientConnections' />
+$type='getMonitorClientConnections'
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='getMonitorClientConnections' />
 </$button>
+
+---
 
 <$button>
 $type='test' param="['a', b]"

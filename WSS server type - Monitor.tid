@@ -1,0 +1,12 @@
+created: 20191013055745325
+description: the one and only supervisory websocket server, started by NodeWebSocketSetup.js
+display-seq: 1
+modified: 20191013060858955
+revision: 0
+short-name: Monitor
+tags: 
+title: WSS server type - Monitor
+type: text/vnd.tiddlywiki
+wss-server-type: yes
+
+{{||WSS Server Type template}}

@@ -1,0 +1,12 @@
+created: 20191013055657015
+description: full duplex 'WSS in the middle'.  The start server request includes a forwarding URL.  Messages received by the server websocket are sent to the forwarding URL's websocket.  Messages received from the forwarding URL's websocket are sent to the original connecting client.
+display-seq: 3
+modified: 20191013060849856
+revision: 0
+short-name: Malcolm
+tags: 
+title: WSS server type - Malcolm
+type: text/vnd.tiddlywiki
+wss-server-type: yes
+
+{{||WSS Server Type template}}

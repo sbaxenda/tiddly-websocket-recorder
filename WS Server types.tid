@@ -1,0 +1,21 @@
+created: 20191012070904163
+modified: 20191013060943228
+revision: 0
+tags: [[in work]]
+title: WS Server types
+type: text/vnd.tiddlywiki
+
+<table>
+<tr>
+<th>[[WSS type|WS Server types]]</th>
+<th>description</th>
+</tr>
+<tbody>
+<$list filter="[has[wss-server-type]sort[display-seq]]">
+<tr>
+<td>{{!!short-name}}</td>
+<td>{{!!description}}</td>
+</tr>
+</$list>
+</tbody>
+</table>
