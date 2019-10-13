@@ -1,5 +1,5 @@
 created: 20191007122454810
-modified: 20191007124434889
+modified: 20191013080538793
 revision: 0
 tags: 
 title: WebSocket Client Summary
@@ -16,7 +16,7 @@ type: text/vnd.tiddlywiki
 <th>endpoint</th>
 </tr>
 <tbody>
-<$list filter="[tag[ws-endpoint]]">
+<$list filter="[all[tiddlers+shadows]tag[ws-endpoint]]">
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
