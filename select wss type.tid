@@ -1,9 +1,9 @@
 created: 20191013064418165
-modified: 20191013064629124
+modified: 20191013080913501
 revision: 6
 server-type: Malcolm
 tags: 
 title: select wss type
 type: text/vnd.tiddlywiki
 
-<$select tiddler=<<stateTiddler>> field="server-type"><$list filter='[has[wss-server-type]]'><option><$view field='short-name'/></option></$list></$select>
+<$select tiddler=<<stateTiddler>> field="server-type"><$list filter='[all[tiddlers+shadows]has[wss-server-type]]'><option><$view field='short-name'/></option></$list></$select>
