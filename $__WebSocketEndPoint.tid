@@ -1,11 +1,15 @@
+alias: WSS monitor client
 created: 19700101000000000
-modified: 20190217072517046
-revision: 81
-state-tiddler: WS-Endpoint-State-855923192
+modified: 20191013071529946
+revision: 0
+state-tiddler: $:/WS-Endpoint-State-855923192
 tags: ws-endpoint
 title: $:/WebSocketEndPoint
 type: text/vnd.tiddlywiki
 
+''Note'': The WSS monitor is listening on port <$edit-text tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options" field="option-monitor-websocket-server-port" size=6 />
+
 {{||WS EP definition template}}
 
+|[[generate messages|Generate messages (over $:/WebSocketEndPoint)]]|
 <<urlMessageLog {{!!state-tiddler}}>>

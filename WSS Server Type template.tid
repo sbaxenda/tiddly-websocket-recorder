@@ -1,0 +1,9 @@
+created: 20191013055939976
+modified: 20191013060035192
+revision: 0
+tags: 
+title: WSS Server Type template
+type: text/vnd.tiddlywiki
+
+|!Name|{{!!short-name}}|
+|!Description|{{!!description}}|
