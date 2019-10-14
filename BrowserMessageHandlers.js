@@ -38,11 +38,6 @@ module-type: startup
     $tw.browserMessageHandlers = $tw.browserMessageHandlers || {};
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
 
-    // copy in tiddly-websocket-recorder options settings
-    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
-    var messageTypeKeyName = optionsTiddler.fields['option-message-type-key-name'];
-    $tw.browserMessageUtil.options = {messageTypeKey: messageTypeKeyName };
-
     $tw.browserMessageUtil.logMessageToTiddler = function(websocket_ix, message, direction) {
 
         var tiddlerFields = {};
@@ -67,13 +62,11 @@ module-type: startup
 
     
     /*
-      Process a generic message (ie, build a tiddler containing the message)
+      Process a generic incoming (received) message (ie, build a tiddler containing the message)
     */
     $tw.browserMessageHandlers.generic = function(websocket_ix, data) {
 
         $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
     }
-
-
 
 })();

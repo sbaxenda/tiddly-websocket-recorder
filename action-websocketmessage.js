@@ -35,6 +35,11 @@ module-type: widget
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
     $tw.browserMessageSendLogger = $tw.browserMessageSendLogger || {};
 
+    // copy in tiddly-websocket-recorder options settings
+    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
+    var messageTypeKeyName = optionsTiddler.fields['option-message-type-key-name'];
+    $tw.browserMessageUtil.options = {messageTypeKey: messageTypeKeyName };
+
 
     var ActionWebSocketMessage = function(parseTreeNode,options) {
 	    this.initialise(parseTreeNode,options);
@@ -111,22 +116,33 @@ module-type: widget
 
             if (typeof $tw.socket[socketIx] !== 'undefined') {
 
-                // Send the message
-                $tw.socket[socketIx].send(JSON.stringify(message));
-
-                // User defined logging if defined for messageType, else generic
-                if (typeof $tw.browserMessageSendLogger[message[msgTypeKey]] === 'function') {
-                  $tw.browserMessageSendLogger[message[msgTypeKey]] (socketIx, message);
-                }
-                else
-                {
-                  $tw.browserMessageUtil.logMessageToTiddler(socketIx, message, "to EP");
-                }
+                sendMessage(socketIx, message);
             }
         }
 
 	    return true; // Action was invoked
     };
+
+    /*
+      message send utility function
+    */
+    let sendMessage = function(socketIx, message) {
+
+        // Send the message
+        $tw.socket[socketIx].txCount = $tw.socket[socketIx].txCount + 1;
+        $tw.socket[socketIx].send(JSON.stringify(message));
+
+        // User defined logging if defined for msg_type, else generic
+        if ((message.hasOwnProperty(messageTypeKeyName) &&
+             (typeof $tw.browserMessageSendLogger[message[messageTypeKeyName]] === 'function'))) {
+            $tw.browserMessageSendLogger[message[messageTypeKeyName]] (socketIx, message);
+        }
+        else
+        {
+            $tw.browserMessageUtil.logMessageToTiddler(socketIx, message, "to EP");
+        }
+    }
+    $tw.browserMessageUtil.sendMessage = sendMessage;
 
     exports["action-websocketmessage"] = ActionWebSocketMessage;
 

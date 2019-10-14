@@ -129,6 +129,9 @@
             $tw.socket[newSocketIx].onerror = errorSocket;
             $tw.socket[newSocketIx].onmessage = parseMessageThisWebSocket(newSocketIx);
             $tw.socket[newSocketIx].binaryType = "arraybuffer";
+            $tw.socket[newSocketIx].rxCount = 0;
+            $tw.socket[newSocketIx].txCount = 0;
+
             updateWebSocketReadyState($tw.socket[newSocketIx].readyState, newSocketIx);
             //console.log(Object.keys($tw.socket[socketIx])); - none visible ?
             
@@ -146,26 +149,23 @@
         var errorSocket = openSocket; // ditto
 
         /*
-          This is a wrapper function, each message from the websocket server has a
-          message type and if that message type matches a handler that is defined
-          than the data is passed to the handler function.
+          If the message from the websocket server has a message type and that message type
+          matches a handler, then data is passed to the handler function.
         */
         var parseMessage = function(ws_index, event) {
+
+            $tw.socket[ws_index].rxCount =  $tw.socket[ws_index].rxCount + 1;
+
             var eventData = JSON.parse(event.data);
             var msgTypeKey = $tw.browserMessageUtil.options.messageTypeKey;
             //console.log("Event data: ",event.data);
-            if (eventData[msgTypeKey]) {
-                if (typeof $tw.browserMessageHandlers[eventData[msgTypeKey]] === 'function') {
-                    //console.log(Object.keys($tw.browserMessageHandlers));
-                    $tw.browserMessageHandlers[eventData[msgTypeKey]](ws_index, eventData);
-                }
-              else {
-                  //console.log("unrecognised messageType-> treating as generic:",eventData);
-                  $tw.browserMessageHandlers.generic(ws_index, eventData);
-              }
+            if ((eventData[msgTypeKey]) &&
+                (typeof $tw.browserMessageHandlers[eventData[msgTypeKey]] === 'function')) {
+                //console.log(Object.keys($tw.browserMessageHandlers));
+                $tw.browserMessageHandlers[eventData[msgTypeKey]](ws_index, eventData);
             }
             else {
-                //console.log("unrecognised message -> treating as generic:",eventData);
+                //console.log("unrecognised messageType-> treating as generic:",eventData);
                 $tw.browserMessageHandlers.generic(ws_index, eventData);
             }
         }
