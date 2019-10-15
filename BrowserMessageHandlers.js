@@ -59,6 +59,22 @@ module-type: startup
 
     let JSON_Writer = makeJSON_Writer($tw.browserMessageUtil.options.prettifyJSON);
 
+    function getBaseTitle(websocket_ix, direction) {
+        let msgNo;
+        let returnVal;
+
+        if (direction === "from EP") {
+            msgNo = $tw.socket[websocket_ix].rxCount;
+        }
+        else {
+            msgNo = $tw.socket[websocket_ix].txCount;
+        }
+        returnVal = `${direction} ${$tw.socket[websocket_ix].url} ${msgNo}`;
+        return returnVal;
+    }
+
+
+
     $tw.browserMessageUtil.logMessageToTiddler = function(websocket_ix, message, direction) {
 
         var tiddlerFields = {};
@@ -72,11 +88,10 @@ module-type: startup
 
         // Create a JSON Tiddler containing the JSON message
         var baseTitle = `${direction} ${tiddlerFields.websocketurl}`;
-        tiddlerFields.title = $tw.wiki.generateNewTitle(baseTitle);
+        tiddlerFields.title = $tw.wiki.generateNewTitle(getBaseTitle(websocket_ix, direction));
         $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields, $tw.wiki.getModificationFields()));
     }
 
-    
     /*
       Process a generic incoming (received) message (ie, build a tiddler containing the message)
     */
