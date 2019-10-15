@@ -1,8 +1,9 @@
 created: 20191005080912001
-modified: 20191008070103159
+modified: 20191014102429728
 option-enable-websocket-server: false
 option-message-type-key-name: messageType
-option-monitor-websocket-server-port: 8050
+option-monitor-websocket-server-port: 6789
+option-prettify-json: false
 revision: 0
 title: $:/plugins/sbaxenda/tiddly-websocket-recorder/base-options
 type: text/vnd.tiddlywiki

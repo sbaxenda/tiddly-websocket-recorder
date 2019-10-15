@@ -33,12 +33,13 @@ module-type: widget
     var Widget = require("$:/core/modules/widgets/widget.js").widget;
 
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
+    $tw.browserMessageUtil.options = $tw.browserMessageUtil.options || {};
     $tw.browserMessageSendLogger = $tw.browserMessageSendLogger || {};
 
-    // copy in tiddly-websocket-recorder options settings
+    // copy in tiddly-websocket-recorder message type key option
     var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
     var messageTypeKeyName = optionsTiddler.fields['option-message-type-key-name'];
-    $tw.browserMessageUtil.options = {messageTypeKey: messageTypeKeyName };
+    $tw.browserMessageUtil.options.messageTypeKey = messageTypeKeyName;
 
 
     var ActionWebSocketMessage = function(parseTreeNode,options) {

@@ -37,27 +37,43 @@ module-type: startup
 
     $tw.browserMessageHandlers = $tw.browserMessageHandlers || {};
     $tw.browserMessageUtil = $tw.browserMessageUtil || {};
+    $tw.browserMessageUtil.options = $tw.browserMessageUtil.options || {};
+
+    // copy in tiddly-websocket-recorder prettify JSON option
+    var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
+    var prettifyJSON = optionsTiddler.fields['option-prettify-json'];
+    $tw.browserMessageUtil.options.prettifyJSON = prettifyJSON;
+
+    function makeJSON_Writer(prettifyPredicate) {
+        if (prettifyPredicate === "true") {
+            return function(msg) {
+                return JSON.stringify(msg, null, 2);
+            };
+        }
+        else {
+            return function(msg) {
+                return JSON.stringify(msg);
+            };
+        }
+    }
+
+    let JSON_Writer = makeJSON_Writer($tw.browserMessageUtil.options.prettifyJSON);
 
     $tw.browserMessageUtil.logMessageToTiddler = function(websocket_ix, message, direction) {
 
         var tiddlerFields = {};
         tiddlerFields.type = "application/json";
         tiddlerFields.direction = direction;
-        tiddlerFields.text = JSON.stringify(message, null, 2);
-        var timeNow = $tw.utils.formatDateString(new Date(), "[UTC]YYYY0MM0DD0hh0mm0ssXXX");
-        tiddlerFields.created = timeNow;
-        tiddlerFields.modified = timeNow;
+        tiddlerFields.text = JSON_Writer(message);
 
         tiddlerFields.websocketurl = $tw.socket[websocket_ix].url;
         tiddlerFields.websocketreadystate = $tw.socket[websocket_ix].readyState;
         tiddlerFields.ws_connection_index = websocket_ix;
-        //tiddlerFields.webSocketProtocol = $tw.socket.protocol;
-        //tiddlerFields.webSocket = $tw.socket;
 
         // Create a JSON Tiddler containing the JSON message
         var baseTitle = `${direction} ${tiddlerFields.websocketurl}`;
         tiddlerFields.title = $tw.wiki.generateNewTitle(baseTitle);
-        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields));
+        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields, $tw.wiki.getModificationFields()));
     }
 
     
