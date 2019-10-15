@@ -1,5 +1,5 @@
 created: 20191007130126214
-modified: 20191013071444100
+modified: 20191015085335158
 revision: 0
 tags: [[in work]]
 title: WebSocket Server Summary
@@ -25,7 +25,7 @@ type: text/vnd.tiddlywiki
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
-<td align="center"><$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select wss type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
+<td align="center">{{select websocket protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select wss type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
 <$action-setfield state-tiddler=<<stateTiddler>> />
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">

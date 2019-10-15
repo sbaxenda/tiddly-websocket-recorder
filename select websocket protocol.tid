@@ -1,0 +1,10 @@
+created: 20191015085057666
+modified: 20191015085246837
+protocol: wss
+revision: 6
+server-type: Malcolm
+tags: 
+title: select websocket protocol
+type: text/vnd.tiddlywiki
+
+<$select tiddler=<<stateTiddler>> field="protocol"><$list filter='[[ws]] [[wss]]'><option><$view field="title"/></option></$list></$select>
