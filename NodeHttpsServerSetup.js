@@ -66,7 +66,7 @@ module-type: startup
 	        res.end('');
 	    });
 
-	    const wss = new WebSocketServer({ simpleServer });
+        const wss = new WebSocketServer({ simpleServer, port: 9998 });
 	    //console.log("wss = ", wss);
 
 	    wss.on('connection', function connection(ws) {
@@ -80,7 +80,13 @@ module-type: startup
 	    simpleServer.listen(9999);
 
 
-	    const forwardingServer = https.createServer(options, (req, res) => {
+	    const forwardingServerOptions = {
+            cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
+            key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
+	    //     dhparam: fs.readFileSync("/path/dhparams.pem")
+	    };
+
+	    const forwardingServer = https.createServer(forwardingServerOptions, (req, res) => {
 
             console.log("Starting forwardingServer on port: 7777");
 	        const { method, url } = req;
@@ -101,7 +107,7 @@ module-type: startup
 	        res.end('');
 	    });
 
-	    const forwardingWss = new WebSocketServer({ forwardingServer });
+	    const forwardingWss = new WebSocketServer({ forwardingServer, port: 7776 });
 	    //console.log("forwardingWss = ", forwardingWss);
 
 	    forwardingWss.on('connection', function connection(ws) {
@@ -112,8 +118,10 @@ module-type: startup
 	        ws.send(JSON.stringify({forwardingServer7777: 'something'}));
 	    });
 
-	    server.listen(7777);
+	    forwardingServer.listen(7777);
+
     }
+
 
 
     //module.exports = setup;
