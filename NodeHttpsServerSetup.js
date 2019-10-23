@@ -88,23 +88,38 @@ module-type: startup
 
 	    const forwardingServer = https.createServer(forwardingServerOptions, (req, res) => {
 
+            //const https = require('https');
+
             console.log("Starting forwardingServer on port: 7777");
-	        const { method, url } = req;
+            console.log("  req.url= ", req.url);
+            // console.log("  req=", req);
 
-	        res.writeHead(200);
-	        res.write("Hello, World\n\n");
-	        res.write("---- request values ----\n");
-	        writeVal(res, 'method= ', method);
-	        writeVal(res, 'url= ', url);
+            const forwardedOptions = {
+                hostname: 'www.google.com.au',
+                port: 443,
+                path: req.url,
+                method: req.method
+            };
 
-	        writeVal(res, 'req.rawHeaders= ', JSON.stringify(req.rawHeaders, null, 2));
+            const forwardedReq = https.request(forwardedOptions, (forwardedRes) => {
+                // console.log('statusCode [internal]:', forwardedRes.statusCode);
+                // console.log('headers [internal]:', forwardedRes.headers);
 
-	        res.write("\n\n");
-	        res.write("---- result values ----\n");
-	        res.write("res.getHeaders = ");
-            res.write(JSON.stringify(res.getHeaders()));
+                forwardedRes.on('data', (d) => {
+                    res.write(d);
+                });
 
-	        res.end('');
+                forwardedRes.on('end', () => {
+                    res.end();
+                });
+            });
+
+            forwardedReq.on('error', (e) => {
+                console.error(e);
+            });
+            forwardedReq.end();
+
+
 	    });
 
 	    const forwardingWss = new WebSocketServer({ forwardingServer, port: 7776 });
