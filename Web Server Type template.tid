@@ -1,0 +1,32 @@
+created: 20191024142806319
+modified: 20191026122659535
+revision: 0
+title: Web Server Type template
+type: text/vnd.tiddlywiki
+
+<$set name="stateTiddler" value=<<qualify '$:/Web-Server-State' >> >
+
+<$button>Start
+<$action-setfield state-tiddler=<<stateTiddler>> />
+<$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
+<$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="port" tiddler=<<stateTiddler>> field="port">
+<$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+</$set>
+</$set>
+</$set>
+</$button>
+<$button>Stop
+<$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="port" tiddler=<<stateTiddler>> field="port">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> />
+</$set>
+</$set>
+</$button>
+ &nbsp;&nbsp;&nbsp;
+
+|!Protocol |!Port |!Server Type | !wss_index|!State|
+| {{select webserver protocol}} | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
+
+</$set>

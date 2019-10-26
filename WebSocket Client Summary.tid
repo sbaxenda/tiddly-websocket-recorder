@@ -1,5 +1,5 @@
 created: 20191007122454810
-modified: 20191013080538793
+modified: 20191026123256631
 revision: 0
 tags: 
 title: WebSocket Client Summary
@@ -20,7 +20,7 @@ type: text/vnd.tiddlywiki
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
-<td align="center"><$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> </td><td><$edit-text tiddler=<<stateTiddler >>field="address" size=20/></td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Connect
+<td align="center">{{select websocket protocol}} </td><td><$edit-text tiddler=<<stateTiddler >>field="address" size=20/></td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Connect
 <$action-setfield state-tiddler=<<stateTiddler>> />
 <$action-setfield $tiddler=<<stateTiddler>> end-point=<<currentTiddler>> />
 <$action-connectwebsocket $server=<<stateTiddler>> />

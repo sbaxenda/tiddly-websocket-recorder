@@ -46,7 +46,7 @@ module-type: startup
 	    
 	    const simpleServer = https.createServer(options, (req, res) => {
 
-            console.log("Starting simpleServer on port: 9999");
+            console.log("Request to simpleServer listening on port: 9999");
 
 	        const { method, url } = req;
 
@@ -66,8 +66,7 @@ module-type: startup
 	        res.end('');
 	    });
 
-        const wss = new WebSocketServer({ simpleServer, port: 9998 });
-	    //console.log("wss = ", wss);
+        const wss = new WebSocketServer({ noServer: true, simpleServer });
 
 	    wss.on('connection', function connection(ws) {
             ws.on('message', function incoming(message) {
@@ -76,6 +75,12 @@ module-type: startup
 
 	        ws.send(JSON.stringify({simpleServerOn9999: 'something'}));
 	    });
+
+        simpleServer.on('upgrade', function upgrade(request, socket, head) {
+            wss.handleUpgrade(request, socket, head, function done(ws) {
+                wss.emit('connection', ws, request);
+            });
+        });
 
 	    simpleServer.listen(9999);
 
@@ -90,7 +95,7 @@ module-type: startup
 
             //const https = require('https');
 
-            console.log("Starting forwardingServer on port: 7777");
+            console.log("Request to forwardingServer listening on port: 7777");
             console.log("  req.url= ", req.url);
             // console.log("  req=", req);
 
@@ -122,7 +127,7 @@ module-type: startup
 
 	    });
 
-	    const forwardingWss = new WebSocketServer({ forwardingServer, port: 7776 });
+	    const forwardingWss = new WebSocketServer({ noServer: true, forwardingServer });
 	    //console.log("forwardingWss = ", forwardingWss);
 
 	    forwardingWss.on('connection', function connection(ws) {
@@ -133,11 +138,15 @@ module-type: startup
 	        ws.send(JSON.stringify({forwardingServer7777: 'something'}));
 	    });
 
+        forwardingServer.on('upgrade', function upgrade(request, socket, head) {
+            forwardingWss.handleUpgrade(request, socket, head, function done(ws) {
+                forwardingWss.emit('connection', ws, request);
+            });
+        });
+
 	    forwardingServer.listen(7777);
 
     }
-
-
 
     //module.exports = setup;
     if (WebSocketServer) {
