@@ -1,0 +1,12 @@
+created: 20191026113531396
+description: forwards request to specified server, and returns responses from that server to the client
+display-seq: 1
+modified: 20191026113639510
+revision: 0
+short-name: Forwarding
+tags: 
+title: web server type - Forwarding
+type: text/vnd.tiddlywiki
+web-server-type: yes
+
+{{||WSS Server Type template}}

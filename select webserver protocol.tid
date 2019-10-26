@@ -1,0 +1,8 @@
+created: 20191026113752687
+modified: 20191026113856348
+revision: 6
+tags: 
+title: select webserver protocol
+type: text/vnd.tiddlywiki
+
+<$select tiddler=<<stateTiddler>> field="protocol"><$list filter='[[http]] [[https]]'><option><$view field="title"/></option></$list></$select>

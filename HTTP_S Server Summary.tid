@@ -1,0 +1,54 @@
+created: 20191024034904991
+modified: 20191026115338784
+revision: 1
+tags: [[in work]]
+title: HTTP/S Server Summary
+type: text/vnd.tiddlywiki
+
+|!Monitor ~WebSocket Server |<|<|<|<|<|
+|!IP|{{$:/ServerIP}}|!port|<$edit-text tiddler="$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options" field="option-monitor-websocket-server-port" size=6 />|!server Type|Monitor|
+
+---
+<table>
+<tr>
+<th>protocol</th>
+<th>address</th>
+<th>port</th>
+<th>Server Type</th>
+<th>index</th>
+<th>state</th>
+<th>WSS control</th>
+<th>server</th>
+</tr>
+<tbody>
+<$list filter="[tag[web-server]]">
+<$set name="stateTiddler" value={{!!state-tiddler}}>
+<$set name="alias" value={{!!alias}} emptyValue="details">
+<tr>
+<td align="center">{{select webserver protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select web server type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
+<$action-setfield state-tiddler=<<stateTiddler>> />
+<$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
+<$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="port" tiddler=<<stateTiddler>> field="port">
+<$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+</$set>
+</$set>
+</$set>
+</$button> <$button>Stop
+<$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
+<$set name="port" tiddler=<<stateTiddler>> field="port">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_web_server" protocol=<<protocol>> port=<<port>> />
+</$set>
+</$set>
+</$button></td><td align="center"><$link to={{!!title}}><<alias>></$link></td>
+</tr>
+
+</$set>
+</$set>
+
+</$list>
+</tbody>
+</table>
+
+[[tidy up|clear Webserver states]]

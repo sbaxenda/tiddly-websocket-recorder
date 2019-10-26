@@ -1,0 +1,12 @@
+created: 20191026113234143
+description: returns request details back to client in the webpage
+display-seq: 2
+modified: 20191026113336710
+revision: 0
+short-name: Echo
+tags: 
+title: web server type - Echo
+type: text/vnd.tiddlywiki
+web-server-type: yes
+
+{{||WSS Server Type template}}

@@ -1,0 +1,8 @@
+created: 20191024142401145
+modified: 20191026115731788
+revision: 3
+tags: 
+title: select web server type
+type: text/vnd.tiddlywiki
+
+<$select tiddler=<<stateTiddler>> field="server-type"><$list filter='[all[tiddlers+shadows]has[web-server-type]]'><option><$view field='short-name'/></option></$list></$select>
