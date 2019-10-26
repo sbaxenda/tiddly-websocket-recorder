@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191026115412296
+modified: 20191026141147448
 revision: 0
 tags: [[in work]]
 title: Web Server definition template
@@ -30,4 +30,6 @@ type: text/vnd.tiddlywiki
 |!Protocol |!Port |!Server Type | !wss_index|!State|
 | {{select webserver protocol}}  | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
 
-</$set>
+| !Forwarding parameters |<|
+|!hostname|!port|
+|<$edit-text tiddler=<<stateTiddler>> field="forwarding-host" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-port" size=6/>|

@@ -70,6 +70,16 @@ module-type: startup
 
     }
 
+    /*
+      WebServer control messages
+    */
+    $tw.nodeMessageHandlers.start_web_server = function(data) {
+        console.log("WebSocketMonitorMessageHandlers.start_web_server -->");
+        console.log(data);
+        console.log("<--");
+    }
+
+
     function handleConnectionThisWebSocket(wss_index) {
         return function(client) {
             handleConnection(wss_index, client);
@@ -102,6 +112,12 @@ module-type: startup
 
     $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
         console.log("WebSocketMonitorMessageHandlers.stop_websocket_server -->");
+        console.log(data);
+        console.log("<--");
+    }
+
+    $tw.nodeMessageHandlers.stop_web_server = function(data) {
+        console.log("WebSocketMonitorMessageHandlers.stop_web_server -->");
         console.log(data);
         console.log("<--");
     }

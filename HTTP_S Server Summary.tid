@@ -1,5 +1,5 @@
 created: 20191024034904991
-modified: 20191026115338784
+modified: 20191026142354342
 revision: 1
 tags: [[in work]]
 title: HTTP/S Server Summary
@@ -31,7 +31,11 @@ type: text/vnd.tiddlywiki
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
 <$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+<$set name="forwardingHost" tiddler=<<stateTiddler>> field="forwarding-host">
+<$set name="forwardingPort" tiddler=<<stateTiddler>> field="forwarding-port">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>/>
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
