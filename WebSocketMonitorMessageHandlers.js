@@ -234,7 +234,7 @@ module-type: startup
         }
 
 
-        function startForwardingSecureWebServer(port) {
+        function startSecureForwardingWebServer(port) {
             let theSecureServer = https.createServer(optionsForwardingServer, (req, res) => {
 
                 console.log("Request to forwardingServer listening on port: %s", port);
