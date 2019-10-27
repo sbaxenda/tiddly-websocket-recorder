@@ -23,7 +23,9 @@ module-type: startup
 
     // require the websockets module if we are running node
     var WebSocketServer = ($tw.node && (enableWebSocketServer === "true")) ? require('ws').Server : undefined;
-    //console.log("WebSocketMonitorMessageHandlers: WebSocketServer=", WebSocketServer, "$tw.node=", $tw.node);
+    const fs = $tw.node ? require("fs"): undefined;
+    const http = $tw.node ? require('http'): undefined;
+    const https = $tw.node ? require('https'): undefined;
 
     function makeCounter() {
         let count = 0;
@@ -33,12 +35,32 @@ module-type: startup
         };
     }
 
-    var getServerIx = makeCounter();
+    var getWebsocketServerIx = makeCounter();
+    var getWebServerIx = makeCounter();
 
     $tw.nodeMessageHandlers = $tw.nodeMessageHandlers || {};
     $tw.websocketServer = [];
     $tw.websocketServerConnections = [];
 
+    $tw.webServer = [];
+
+	const optionsEchoServer = {
+        cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
+        key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
+	    //     dhparam: fs.readFileSync("/path/dhparams.pem")
+	};
+
+    const optionsForwardingServer = {
+        cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
+        key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
+	    //     dhparam: fs.readFileSync("/path/dhparams.pem")
+	};
+
+    function writeVal(res, label, value) {
+	    res.write(label);
+	    res.write(value);
+	    res.write("\n");
+	}
 
     /*
       WebSocket Server control messages
@@ -51,7 +73,7 @@ module-type: startup
         let PortNo = data.port;
         let WSProtocol = data.protocol;
         console.log(`starting WS Server at ${WSProtocol}://${IPAddress}:${PortNo}`);
-        var newServerIx = getServerIx();
+        var newServerIx = getWebsocketServerIx();
 
         try {
             $tw.websocketServer[newServerIx] = new WebSocketServer({port: PortNo});
@@ -65,20 +87,220 @@ module-type: startup
 
 
         } catch (e) {
-            console.log(e);
+            console.log("start_websocket_server exception= ", e);
         }
 
     }
 
-    /*
-      WebServer control messages
-    */
-    $tw.nodeMessageHandlers.start_web_server = function(data) {
-        console.log("WebSocketMonitorMessageHandlers.start_web_server -->");
+    $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
+        console.log("WebSocketMonitorMessageHandlers.stop_websocket_server -->");
         console.log(data);
         console.log("<--");
     }
 
+    /*
+      Webserver control messages
+
+      {"messageType":"start_web_server","protocol":"http","port":"1234","serverType":"Forwarding",
+      "wsServerStateTiddler":"$:/Web-Server-State-1448435960","forwardingHost":"www.google.com.au",
+      "forwardingPort":"443"}
+    */
+    $tw.nodeMessageHandlers.start_web_server = function(data) {
+
+        let WebServerProtocol = data.protocol;
+        let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
+        let WebServerPortNo = data.port;
+        let WebServerType = data.serverType;
+        let WebServerForwardingHost;
+        let WebServerForwardingPort;
+
+        console.log(`starting ${WebServerType} WebServer at ${WebServerProtocol}://${IPAddress}:${WebServerPortNo}`);
+        if (WebServerType === "Forwarding") {
+            WebServerForwardingHost = data.forwardingHost;
+            WebServerForwardingPort = data.forwardingPort;
+            console.log("  forwardingHost= ", WebServerForwardingHost);
+            console.log("  forwardingPort= ", WebServerForwardingPort);
+        }
+
+        var newServerIx = getWebServerIx();
+
+        try {
+
+            if (WebServerType === "Echo") {
+                if (WebServerProtocol === "http") {
+                    $tw.webServer[newServerIx] = startEchoWebServer(WebServerPortNo);
+                }
+                else {
+                    $tw.webServer[newServerIx] = startSecureEchoWebServer(WebServerPortNo);
+                }
+            }
+            else if (WebServerType === "Forwarding") {
+                if (WebServerProtocol === "http") {
+                    $tw.webServer[newServerIx] = startForwardingWebServer(WebServerPortNo);
+                }
+                else
+                {
+                    $tw.webServer[newServerIx] = startSecureForwardingWebServer(WebServerPortNo);
+                }
+            } else {
+                console.log("Unkown webServer type = %s", WebServerType);
+                // Indicate unknown type to condition success response
+                WebServerType = "Unknown";
+            }
+
+            if (WebServerType !== "Unknown") {
+                // Report success and new WSS index back to caller
+                $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: newServerIx, serverAddress: 'TBD'} ));
+            }
+
+        } catch (e) {
+            console.log("start_web_server exception= ", e);
+        }
+
+        function startEchoWebServer(port) {
+            let theServer = http.createServer({}, (req, res) => {
+                console.log("Request to EchoWebServer listening on port: ", port);
+
+	            const { method, url } = req;
+
+	            res.writeHead(200);
+	            res.write("---- request values ----\n");
+	            writeVal(res, 'method= ', method);
+	            writeVal(res, 'url= ', url);
+	            writeVal(res, 'req.rawHeaders= ', JSON.stringify(req.rawHeaders, null, 2));
+	            res.write("\n\n");
+	            res.write("---- result values ----\n");
+	            res.write("res.getHeaders = ");
+                res.write(JSON.stringify(res.getHeaders()));
+	            res.end('');
+            });
+
+            const wss = new WebSocketServer({ noServer: true, theServer });
+
+	        wss.on('connection', function connection(ws) {
+                ws.on('message', function incoming(message) {
+		            console.log('EchoWebServer on port %s received: %s', port, message);
+                });
+
+	            ws.send(JSON.stringify({EchoWebServerHello: 'Hello World!'}));
+	        });
+
+            theServer.on('upgrade', function upgrade(request, socket, head) {
+                wss.handleUpgrade(request, socket, head, function done(ws) {
+                    wss.emit('connection', ws, request);
+                });
+            });
+
+            theServer.listen(port);
+            return(theServer);
+        }
+
+        function startSecureEchoWebServer(port) {
+            let theSecureServer = https.createServer(optionsEchoServer, (req, res) => {
+                console.log("Request to SecureEchoWebServer listening on port: ", port);
+
+	            const { method, url } = req;
+
+	            res.writeHead(200);
+	            res.write("---- request values ----\n");
+	            writeVal(res, 'method= ', method);
+	            writeVal(res, 'url= ', url);
+	            writeVal(res, 'req.rawHeaders= ', JSON.stringify(req.rawHeaders, null, 2));
+	            res.write("\n\n");
+	            res.write("---- result values ----\n");
+	            res.write("res.getHeaders = ");
+                res.write(JSON.stringify(res.getHeaders()));
+	            res.end('');
+            });
+
+            const wss = new WebSocketServer({ noServer: true, theSecureServer });
+
+	        wss.on('connection', function connection(ws) {
+                ws.on('message', function incoming(message) {
+		            console.log('SecureEchoWebServer on port %s received: %s', port, message);
+                });
+
+	            ws.send(JSON.stringify({SecureEchoWebServerHello: 'Hello World!'}));
+	        });
+
+            theSecureServer.on('upgrade', function upgrade(request, socket, head) {
+                wss.handleUpgrade(request, socket, head, function done(ws) {
+                    wss.emit('connection', ws, request);
+                });
+            });
+
+	        theSecureServer.listen(port);
+            return(theSecureServer);
+        }
+
+
+        function startForwardingSecureWebServer(port) {
+            let theSecureServer = https.createServer(optionsForwardingServer, (req, res) => {
+
+                console.log("Request to forwardingServer listening on port: %s", port);
+                console.log("  req.url= ", req.url);
+                // console.log("  req=", req);
+
+                const forwardedOptions = {
+                    hostname: WebServerForwardingHost,
+                    port: WebServerForwardingPort,
+                    path: req.url,
+                    method: req.method
+                };
+
+                const forwardedReq = https.request(forwardedOptions, (forwardedRes) => {
+                    // console.log('statusCode [internal]:', forwardedRes.statusCode);
+                    // console.log('headers [internal]:', forwardedRes.headers);
+
+                    forwardedRes.on('data', (d) => {
+                        res.write(d);
+                    });
+
+                    forwardedRes.on('end', () => {
+                        res.end();
+                    });
+                });
+
+                forwardedReq.on('error', (e) => {
+                    console.error(e);
+                });
+                forwardedReq.end();
+
+
+	        });
+
+	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
+	        //console.log("forwardingWss = ", forwardingWss);
+
+	        forwardingWss.on('connection', function connection(ws) {
+                ws.on('message', function incoming(message) {
+		            console.log('forwardingWSS received: %s', message);
+                });
+
+	            ws.send(JSON.stringify({forwardingSecureServer: 'something'}));
+	        });
+
+            theSecureServer.on('upgrade', function upgrade(request, socket, head) {
+                forwardingWss.handleUpgrade(request, socket, head, function done(ws) {
+                    forwardingWss.emit('connection', ws, request);
+                });
+            });
+
+	        theSecureServer.listen(port);
+
+            return(theSecureServer);
+        }
+
+        function startForwardingWebServer(port) {
+            console.log("startForwardingWebServer - stub");
+        }
+    }
+
+    $tw.nodeMessageHandlers.stop_web_server = function(data) {
+        console.log("WebSocketMonitorMessageHandlers.stop_web_server -->");
+        console.log(data);
+        console.log("<--");
+    }
 
     function handleConnectionThisWebSocket(wss_index) {
         return function(client) {
@@ -107,19 +329,6 @@ module-type: startup
             }
         });
         $tw.websocketServerConnections[wss_index][Object.keys($tw.websocketServerConnections[wss_index]).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS ', source: 'handleConnection WSS', client: client}));
-    }
-
-
-    $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
-        console.log("WebSocketMonitorMessageHandlers.stop_websocket_server -->");
-        console.log(data);
-        console.log("<--");
-    }
-
-    $tw.nodeMessageHandlers.stop_web_server = function(data) {
-        console.log("WebSocketMonitorMessageHandlers.stop_web_server -->");
-        console.log(data);
-        console.log("<--");
     }
 
     /*
