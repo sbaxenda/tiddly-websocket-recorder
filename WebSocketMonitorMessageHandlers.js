@@ -119,17 +119,26 @@ module-type: startup
         let WebServerPortNo = data.port;
         let WebServerType = data.serverType;
         let WebServerForwardingHost;
-        let WebServerWebsocketForwardingHost;
         let WebServerForwardingPort;
+        let WebServerForwardingPath;
+        let WebServerWebsocketForwardingHost;
+        let WebServerWebsocketForwardingPort;
+        let WebServerWebsocketForwardingPath;
 
         console.log(`starting ${WebServerType} WebServer at ${WebServerProtocol}://${IPAddress}:${WebServerPortNo}`);
         if (WebServerType === "Forwarding") {
             WebServerForwardingHost = data.forwardingHost;
-            WebServerWebsocketForwardingHost = data.forwardingWebsocketHost;
             WebServerForwardingPort = data.forwardingPort;
+            WebServerForwardingPath = data.forwardingPath;
+            WebServerWebsocketForwardingHost = data.forwardingWebsocketHost;
+            WebServerWebsocketForwardingPort = data.forwardingWebsocketPort;
+            WebServerWebsocketForwardingPath = data.forwardingWebsocketPath;
             console.log("  forwardingHost= ", WebServerForwardingHost);
-            console.log("  forwardingWebsocketHost= ", WebServerWebsocketForwardingHost);
             console.log("  forwardingPort= ", WebServerForwardingPort);
+            console.log("  forwardingPath= ", WebServerForwardingPath);
+            console.log("  forwardingHost(ws)= ", WebServerWebsocketForwardingHost);
+            console.log("  forwardingPort(ws)= ", WebServerWebsocketForwardingPort);
+            console.log("  forwardingPath(ws)= ", WebServerWebsocketForwardingPath);
         }
 
         var newServerIx = getWebServerIx();
@@ -289,12 +298,14 @@ module-type: startup
 
             // Open client to forwarded WebSocketServer
             let fwdHost = WebServerWebsocketForwardingHost;
-            let fwdPort = WebServerForwardingPort;
+            let fwdPort = WebServerWebsocketForwardingPort;
+            let fwdPath = WebServerWebsocketForwardingPath;
             let theClientWebSocket;
 
             const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
             //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
             forwardingWebSocketClient.onmessage = function(event) {
+                console.log("forwardingWebSocketClient: received event=", event);
                 theClientWebSocket.send(event.data);
             };
 
