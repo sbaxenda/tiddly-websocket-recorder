@@ -23,6 +23,7 @@ module-type: startup
 
     // require the websockets module if we are running node
     var WebSocketServer = ($tw.node && (enableWebSocketServer === "true")) ? require('ws').Server : undefined;
+    const WebSocket = $tw.node ? require('ws'): undefined;
     const fs = $tw.node ? require("fs"): undefined;
     const http = $tw.node ? require('http'): undefined;
     const https = $tw.node ? require('https'): undefined;
@@ -44,17 +45,23 @@ module-type: startup
 
     $tw.webServer = [];
 
-	const optionsEchoServer = {
-        cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-        key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	    //     dhparam: fs.readFileSync("/path/dhparams.pem")
-	};
+    // if ($tw.node) {
+	    const optionsEchoServer = {
+            cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
+            key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
+	        //     dhparam: fs.readFileSync("/path/dhparams.pem")
+	    };
 
-    const optionsForwardingServer = {
-        cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-        key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	    //     dhparam: fs.readFileSync("/path/dhparams.pem")
-	};
+        const optionsForwardingServer = {
+            cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
+            key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
+	        //     dhparam: fs.readFileSync("/path/dhparams.pem")
+	    };
+    // }
+    // else {
+	//     const optionsEchoServer = {};
+	//     const optionsForwardingServer = {};
+    // }
 
     function writeVal(res, label, value) {
 	    res.write(label);
@@ -112,13 +119,16 @@ module-type: startup
         let WebServerPortNo = data.port;
         let WebServerType = data.serverType;
         let WebServerForwardingHost;
+        let WebServerWebsocketForwardingHost;
         let WebServerForwardingPort;
 
         console.log(`starting ${WebServerType} WebServer at ${WebServerProtocol}://${IPAddress}:${WebServerPortNo}`);
         if (WebServerType === "Forwarding") {
             WebServerForwardingHost = data.forwardingHost;
+            WebServerWebsocketForwardingHost = data.forwardingWebsocketHost;
             WebServerForwardingPort = data.forwardingPort;
             console.log("  forwardingHost= ", WebServerForwardingHost);
+            console.log("  forwardingWebsocketHost= ", WebServerWebsocketForwardingHost);
             console.log("  forwardingPort= ", WebServerForwardingPort);
         }
 
@@ -180,6 +190,8 @@ module-type: startup
 	        wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
 		            console.log('EchoWebServer on port %s received: %s', port, message);
+                    // echo back to sender
+                    ws.send(message);
                 });
 
 	            ws.send(JSON.stringify({EchoWebServerHello: 'Hello World!'}));
@@ -218,6 +230,8 @@ module-type: startup
 	        wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
 		            console.log('SecureEchoWebServer on port %s received: %s', port, message);
+                    // echo back to sender
+                    ws.send(message);
                 });
 
 	            ws.send(JSON.stringify({SecureEchoWebServerHello: 'Hello World!'}));
@@ -233,6 +247,10 @@ module-type: startup
             return(theSecureServer);
         }
 
+
+        function startForwardingWebServer(port) {
+            console.log("startForwardingWebServer - stub");
+        }
 
         function startSecureForwardingWebServer(port) {
             let theSecureServer = https.createServer(optionsForwardingServer, (req, res) => {
@@ -269,12 +287,24 @@ module-type: startup
 
 	        });
 
+            // Open client to forwarded WebSocketServer
+            let fwdHost = WebServerWebsocketForwardingHost;
+            let fwdPort = WebServerForwardingPort;
+            let theClientWebSocket;
+
+            const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
+            //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
+            forwardingWebSocketClient.onmessage = function(event) {
+                theClientWebSocket.send(event.data);
+            };
+
 	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
 	        //console.log("forwardingWss = ", forwardingWss);
 
 	        forwardingWss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
 		            console.log('forwardingWSS received: %s', message);
+                    forwardingWebSocketClient.send(message.data);
                 });
 
 	            ws.send(JSON.stringify({forwardingSecureServer: 'something'}));
@@ -283,6 +313,7 @@ module-type: startup
             theSecureServer.on('upgrade', function upgrade(request, socket, head) {
                 forwardingWss.handleUpgrade(request, socket, head, function done(ws) {
                     forwardingWss.emit('connection', ws, request);
+                    theClientWebSocket = ws;
                 });
             });
 
@@ -291,9 +322,6 @@ module-type: startup
             return(theSecureServer);
         }
 
-        function startForwardingWebServer(port) {
-            console.log("startForwardingWebServer - stub");
-        }
     }
 
     $tw.nodeMessageHandlers.stop_web_server = function(data) {

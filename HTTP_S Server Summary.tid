@@ -1,6 +1,6 @@
 created: 20191024034904991
-modified: 20191026142354342
-revision: 1
+modified: 20191028143834856
+revision: 0
 tags: [[in work]]
 title: HTTP/S Server Summary
 type: text/vnd.tiddlywiki
@@ -25,7 +25,7 @@ type: text/vnd.tiddlywiki
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
-<td align="center">{{select webserver protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select web server type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
+<td align="center">{{select webserver protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select web server type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="web_server_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
 <$action-setfield state-tiddler=<<stateTiddler>> />
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
@@ -33,7 +33,15 @@ type: text/vnd.tiddlywiki
 <$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
 <$set name="forwardingHost" tiddler=<<stateTiddler>> field="forwarding-host">
 <$set name="forwardingPort" tiddler=<<stateTiddler>> field="forwarding-port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>/>
+<$set name="forwardingPath" tiddler=<<stateTiddler>> field="forwarding-path">
+<$set name="forwardingWebsocketHost" tiddler=<<stateTiddler>> field="forwarding-websocket-host">
+<$set name="forwardingWebsocketPort" tiddler=<<stateTiddler>> field="forwarding-webscocket-port">
+<$set name="forwardingWebsocketPath" tiddler=<<stateTiddler>> field="forwarding-webscocket-path">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> />
+</$set>
+</$set>
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
@@ -55,4 +63,4 @@ type: text/vnd.tiddlywiki
 </tbody>
 </table>
 
-[[tidy up|clear Webserver states]]
+[[tidy up|clear WebServer states]]

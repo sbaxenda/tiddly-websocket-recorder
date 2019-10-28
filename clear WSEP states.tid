@@ -1,11 +1,11 @@
 created: 20190504041650113
-modified: 20191007123222022
+modified: 20191028115919040
 revision: 0
 title: clear WSEP states
 type: text/vnd.tiddlywiki
 
 <$button>`Clear WSEP states:`<br/>
-<$list filter="[has[end-point]]">
+<$list filter="[prefix[$:/WS-Endpoint-State]has[end-point]]">
 <<currentTiddler>> [for <$transclude field="end-point" />]<br/>
 <$action-setfield $field="ws_index" $value=""/>
 <$action-setfield $field="ws-readystate" $value=""/>

@@ -1,5 +1,5 @@
 /*\
-title: $:/plugins/sbaxenda/tiddly-websocket-recorder/BrowserWebSocketMonitoryMessageHandlers.js
+title: $:/plugins/sbaxenda/tiddly-websocket-recorder/BrowserWebSocketMonitorMessageHandlers.js
 type: application/javascript
 module-type: startup
 
@@ -40,13 +40,27 @@ module-type: startup
 
     $tw.browserMessageHandlers.started_websocket_server = function(websocket_ix, data) {
         console.log(" $tw.browserMessageHandlers.started_websocket_server: ...");
-        // Update state tiddler for websocket serve with ServerIndex
+        // Update state tiddler for websocket server with ServerIndex
         let wsStateTiddler = data.stateTiddler;
         let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
         let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler, 
                                                    {"wss_index": data.wss_index},
                                                   $tw.wiki.getModificationFields());
-        console.log("updatedState: ", updatedStateTiddler);
+        console.log("started_websocket_server: updatedState: ", updatedStateTiddler);
+		$tw.wiki.addTiddler(updatedStateTiddler);
+
+        $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
+    }
+
+    $tw.browserMessageHandlers.started_web_server = function(websocket_ix, data) {
+        console.log(" $tw.browserMessageHandlers.started_web_server: ...");
+        // Update state tiddler for web server with ServerIndex
+        let wsStateTiddler = data.stateTiddler;
+        let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
+        let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler,
+                                                   {"web_server_index": data.web_server_index},
+                                                  $tw.wiki.getModificationFields());
+        console.log("started_web_server: updatedState: ", updatedStateTiddler);
 		$tw.wiki.addTiddler(updatedStateTiddler);
 
         $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
