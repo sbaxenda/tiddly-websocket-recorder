@@ -305,8 +305,12 @@ module-type: startup
             const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
             //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
             forwardingWebSocketClient.onmessage = function(event) {
-                console.log("forwardingWebSocketClient: received event=", event);
-                theClientWebSocket.send(event.data);
+                console.log("forwardingWebSocketClient: received event.data=", event.data);
+                if (theClientWebSocket !== undefined) {
+                    theClientWebSocket.send(event.data);
+                } else {
+                    console.log("forwardingWebSocketClient: silently dropping messge (as no client connection).");
+                }
             };
 
 	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
@@ -314,8 +318,8 @@ module-type: startup
 
 	        forwardingWss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
-		            console.log('forwardingWSS received: %s', message);
-                    forwardingWebSocketClient.send(message.data);
+		            console.log('forwardingWSS received: message= ', message);
+                    forwardingWebSocketClient.send(message);
                 });
 
 	            ws.send(JSON.stringify({forwardingSecureServer: 'something'}));
@@ -323,8 +327,9 @@ module-type: startup
 
             theSecureServer.on('upgrade', function upgrade(request, socket, head) {
                 forwardingWss.handleUpgrade(request, socket, head, function done(ws) {
-                    forwardingWss.emit('connection', ws, request);
+                    console.log("** handling upgrade done()");
                     theClientWebSocket = ws;
+                    forwardingWss.emit('connection', ws, request);
                 });
             });
 

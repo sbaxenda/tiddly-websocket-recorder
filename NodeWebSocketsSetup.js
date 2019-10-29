@@ -17,6 +17,9 @@ module-type: startup
     /*global $tw: false */
     "use strict";
 
+    // TODO: do this properly (ie, securely)
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
     // copy in nodeWSS options from tiddly-websocket-recorder options settings
     var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');
     var enableWebSocketServer = optionsTiddler.fields['option-enable-websocket-server'];
