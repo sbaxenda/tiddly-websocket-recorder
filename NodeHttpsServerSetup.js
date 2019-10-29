@@ -32,6 +32,8 @@ module-type: startup
           TODO: factor this out into parameterised values settable vi wss monitor interface
         */
 
+/* keep for reference temporarily
+
 	    const options = {
             cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
             key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
@@ -146,6 +148,8 @@ module-type: startup
 
 	    forwardingServer.listen(7777);
 
+end: keep for reference temporarily
+*/
     }
 
     //module.exports = setup;
