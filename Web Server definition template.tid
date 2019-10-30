@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191029021420650
+modified: 20191030102529948
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -18,7 +18,15 @@ type: text/vnd.tiddlywiki
 <$set name="forwardingWebsocketHost" tiddler=<<stateTiddler>> field="forwarding-websocket-host">
 <$set name="forwardingWebsocketPort" tiddler=<<stateTiddler>> field="forwarding-websocket-port">
 <$set name="forwardingWebsocketPath" tiddler=<<stateTiddler>> field="forwarding-websocket-path">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> />
+<$set name="securityPath" tiddler=<<stateTiddler>> field="security-path">
+<$set name="certFilename" tiddler=<<stateTiddler>> field="cert-filename">
+<$set name="keyFilename" tiddler=<<stateTiddler>> field="key-filename">
+<$set name="dhParamsFilename" tiddler=<<stateTiddler>> field="dh-params-filename">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> securityPath=<<securityPath>> certFilename=<<certFilename>> keyFilename=<<keyFilename>> dhParamsFilename=<<dhParamsFilename>> />
+</$set>
+</$set>
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
@@ -41,7 +49,12 @@ type: text/vnd.tiddlywiki
 |!Protocol |!Port |!Server Type | !wss_index|!State|
 | {{select webserver protocol}}  | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
 
-| !Forwarding |!~WebServer|!~WebSocket|
+| !Forwarding |<|<|
+| ! |!~WebServer|!~WebSocket|
 |!hostname|<$edit-text tiddler=<<stateTiddler>> field="forwarding-host" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-host" size=24/>|
 |!port|<$edit-text tiddler=<<stateTiddler>> field="forwarding-port" size=6/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-port" size=6/>|
 |!path|<$edit-text tiddler=<<stateTiddler>> field="forwarding-path" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-path" size=24/>|
+
+| !Security |<|<|<|
+|!Certificate |!Key |!DH params |!Path |
+| <$edit-text tiddler=<<stateTiddler>> field="cert-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="key-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="dh-params-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="security-path" size=30/> |

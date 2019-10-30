@@ -45,24 +45,6 @@ module-type: startup
 
     $tw.webServer = [];
 
-    // // if ($tw.node) {
-	//     const optionsEchoServer = {
-    //         cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-    //         key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	//         //     dhparam: fs.readFileSync("/path/dhparams.pem")
-	//     };
-
-    //     const optionsForwardingServer = {
-    //         cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-    //         key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	//         //     dhparam: fs.readFileSync("/path/dhparams.pem")
-	//     };
-    // // }
-    // // else {
-	// //     const optionsEchoServer = {};
-	// //     const optionsForwardingServer = {};
-    // // }
-
     function writeVal(res, label, value) {
 	    res.write(label);
 	    res.write(value);
@@ -124,6 +106,10 @@ module-type: startup
         let WebServerWebsocketForwardingHost;
         let WebServerWebsocketForwardingPort;
         let WebServerWebsocketForwardingPath;
+        let WebServerSecurityPath = data.securityPath;
+        let WebServerCertFilename = data.certFilename;
+        let WebServerKeyFilename = data.keyFilename;
+        let WebServerDhParamsFilename = data.dhParamsFilename;
 
         console.log(`starting ${WebServerType} WebServer at ${WebServerProtocol}://${IPAddress}:${WebServerPortNo}`);
         if (WebServerType === "Forwarding") {
@@ -139,6 +125,10 @@ module-type: startup
             console.log("  forwardingHost(ws)= ", WebServerWebsocketForwardingHost);
             console.log("  forwardingPort(ws)= ", WebServerWebsocketForwardingPort);
             console.log("  forwardingPath(ws)= ", WebServerWebsocketForwardingPath);
+            console.log("  securityPath= ", WebServerSecurityPath);
+            console.log("  certFilename= ", WebServerCertFilename);
+            console.log("  keyFilename= ", WebServerKeyFilename);
+            console.log("  dhParamsFilename= ", WebServerDhParamsFilename);
         }
 
         var newServerIx = getWebServerIx();
@@ -174,6 +164,20 @@ module-type: startup
 
         } catch (e) {
             console.log("start_web_server exception= ", e);
+        }
+
+        // Read file at path (returns undefined on error)
+        function readFile(path, filename) {
+            let returnVal;
+            try {
+                let filePath = `${path}/${filename}`;
+                console.log("readFile reading filename= ", filePath);
+                returnVal = fs.readFileSync(filePath);
+            }
+            catch(err) {
+                console.log(`readFile() path= ${path}, filename= ${filename}, err= ${err}`);
+            }
+            return returnVal;
         }
 
         function startEchoWebServer(port) {
@@ -219,9 +223,9 @@ module-type: startup
         function startSecureEchoWebServer(port) {
 
             const optionsEchoServer = {
-                cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-                key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	            //     dhparam: fs.readFileSync("/path/dhparams.pem")
+                cert:    readFile(WebServerSecurityPath, WebServerCertFilename),
+                key:     readFile(WebServerSecurityPath, WebServerKeyFilename),
+	            // dhparam: readFile(WebServerSecurityPath, WebServerDhParamsFilename),
 	        };
 
             let theSecureServer = https.createServer(optionsEchoServer, (req, res) => {
@@ -250,7 +254,7 @@ module-type: startup
                     ws.send(message);
                 });
 
-	            ws.send(JSON.stringify({SecureEchoWebServerHello: 'Hello World!'}));
+	            ws.send(JSON.stringify({SecureEchoWebServerHello: 'Hello from SecureEchoWebServer'}));
 	        });
 
             theSecureServer.on('upgrade', function upgrade(request, socket, head) {
@@ -272,9 +276,9 @@ module-type: startup
         function startSecureForwardingWebServer(port) {
 
             const optionsForwardingServer = {
-                cert: fs.readFileSync('./develop-WebSocketRecorder/server.crt'),
-                key: fs.readFileSync('./develop-WebSocketRecorder/dev-key.pem')
-	            //     dhparam: fs.readFileSync("/path/dhparams.pem")
+                cert:    readFile(WebServerSecurityPath, WebServerCertFilename),
+                key:     readFile(WebServerSecurityPath, WebServerKeyFilename),
+	            // dhparam: readFile(WebServerSecurityPath, WebServerDhParamsFilename),
 	        };
 
             let theSecureServer = https.createServer(optionsForwardingServer, (req, res) => {
