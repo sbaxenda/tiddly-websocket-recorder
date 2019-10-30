@@ -253,6 +253,7 @@ module-type: startup
             });
 
 	        theSecureServer.listen(port);
+            //console.log("theEcho SS - ", theSecureServer);
             return(theSecureServer);
         }
 
@@ -334,7 +335,7 @@ module-type: startup
             });
 
 	        theSecureServer.listen(port);
-
+            //console.log("theForwarding SS - ", theSecureServer);
             return(theSecureServer);
         }
 
