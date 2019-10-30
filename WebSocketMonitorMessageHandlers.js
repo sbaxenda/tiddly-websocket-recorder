@@ -321,17 +321,6 @@ module-type: startup
             let fwdPath = WebServerWebsocketForwardingPath;
             let theClientWebSocket;
 
-            const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
-            //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
-            forwardingWebSocketClient.onmessage = function(event) {
-                console.log("forwardingWebSocketClient: received event.data=", event.data);
-                if (theClientWebSocket !== undefined) {
-                    theClientWebSocket.send(event.data);
-                } else {
-                    console.log("forwardingWebSocketClient: silently dropping messge (as no client connection).");
-                }
-            };
-
 	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
 	        //console.log("forwardingWss = ", forwardingWss);
 
@@ -340,6 +329,17 @@ module-type: startup
 		            console.log('forwardingWSS received: message= ', message);
                     forwardingWebSocketClient.send(message);
                 });
+
+                const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
+                //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
+                forwardingWebSocketClient.onmessage = function(event) {
+                    console.log("forwardingWebSocketClient: received event.data=", event.data);
+                    // if (theClientWebSocket !== undefined) {
+                        theClientWebSocket.send(event.data);
+                    // } else {
+                    //     console.log("forwardingWebSocketClient: silently dropping messge (as no client connection).");
+                    // }
+                };
 
 	            ws.send(JSON.stringify({forwardingSecureServer: 'something'}));
 	        });
