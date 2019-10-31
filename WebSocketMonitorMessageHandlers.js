@@ -51,6 +51,34 @@ module-type: startup
 	    res.write("\n");
 	}
 
+    function logMessageToTiddler(websocket, message, direction) {
+
+        function getBaseTitle(url, direction) {
+            let msgNo;
+            let returnVal;
+            // returnVal = `${direction} ${websocket.url} ${msgNo}`;
+            returnVal = `${direction} ${url}/ `;
+            return returnVal;
+        }
+
+        let theURL = `wss://${websocket._socket.remoteAddress}:${websocket._socket.remotePort}`;
+
+        var tiddlerFields = {};
+        tiddlerFields.type = "application/json";
+        tiddlerFields.direction = direction;
+        tiddlerFields.text = message;
+
+        tiddlerFields.websocketurl = theURL;
+        tiddlerFields.websocketreadystate = websocket.readyState;
+        //tiddlerFields.ws_connection_index = websocket_ix;  // Doesn't apply here
+
+        // Create a JSON Tiddler containing the JSON message
+        // var baseTitle = `${direction} ${theURL}`;
+        tiddlerFields.title = $tw.wiki.generateNewTitle(getBaseTitle(theURL, direction));
+        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields, $tw.wiki.getModificationFields()));
+    }
+
+
     /*
       WebSocket Server control messages
     */
@@ -325,23 +353,30 @@ module-type: startup
 	        //console.log("forwardingWss = ", forwardingWss);
 
 	        forwardingWss.on('connection', function connection(ws) {
+                // console.log('forwardingWss new connection, ws= ',ws);
                 ws.on('message', function incoming(message) {
 		            console.log('forwardingWSS received: message= ', message);
                     forwardingWebSocketClient.send(message);
-                });
+
+                    // log message "to EP..."
+                    logMessageToTiddler(ws, message, "to EP")
+                 });
 
                 const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
                 //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
                 forwardingWebSocketClient.onmessage = function(event) {
-                    console.log("forwardingWebSocketClient: received event.data=", event.data);
-                    // if (theClientWebSocket !== undefined) {
-                        theClientWebSocket.send(event.data);
-                    // } else {
-                    //     console.log("forwardingWebSocketClient: silently dropping messge (as no client connection).");
-                    // }
+                    let message = event.data;
+                    console.log("forwardingWebSocketClient: received message=", message);
+                    theClientWebSocket.send(message);
+
+                    // log message "from EP ..."
+                    logMessageToTiddler(ws, message, "from EP")
+
                 };
 
-	            ws.send(JSON.stringify({forwardingSecureServer: 'something'}));
+	            // ws.send(JSON.stringify({forwardingSecureServer: 'Opened forwardingWebSocketClient'}));
+                // console.log("*** ", $tw.wiki.getModificationFields());
+                // $tw.wiki.addTiddler(new $tw.Tiddler({title: "MaryLivesAgain", text: 'Hello from Node'}, $tw.wiki.getModificationFields()));
 	        });
 
             theSecureServer.on('upgrade', function upgrade(request, socket, head) {
