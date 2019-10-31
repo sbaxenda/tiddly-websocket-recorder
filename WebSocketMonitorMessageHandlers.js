@@ -75,7 +75,9 @@ module-type: startup
         // Create a JSON Tiddler containing the JSON message
         // var baseTitle = `${direction} ${theURL}`;
         tiddlerFields.title = $tw.wiki.generateNewTitle(getBaseTitle(theURL, direction));
-        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields, $tw.wiki.getModificationFields()));
+        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields,
+                                            $tw.wiki.getCreationFields(),
+                                            $tw.wiki.getModificationFields()));
     }
 
 
