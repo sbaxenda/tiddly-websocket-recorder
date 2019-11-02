@@ -1,5 +1,5 @@
 created: 20191007130126214
-modified: 20191029021449891
+modified: 20191102081732016
 revision: 0
 title: WebSocket Server Summary
 type: text/vnd.tiddlywiki
@@ -24,7 +24,7 @@ type: text/vnd.tiddlywiki
 <$set name="stateTiddler" value={{!!state-tiddler}}>
 <$set name="alias" value={{!!alias}} emptyValue="details">
 <tr>
-<td align="center">{{select websocket protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select wss type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="ws-readystate" /></td><td><$button>Start
+<td align="center">{{select websocket protocol}} </td><td>{{$:/ServerIP}}</td><td><$edit-text tiddler=<<stateTiddler>> field="port" size=6/></td><td>{{select wss type}}</td><td align="center"><$transclude tiddler=<<stateTiddler>> field="wss_index" /></td><td align="center"><$transclude tiddler=<<stateTiddler>> field="server_state" /></td><td><$button>Start
 <$action-setfield state-tiddler=<<stateTiddler>> />
 <$action-setfield $tiddler=<<stateTiddler>> server=<<currentTiddler>> />
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
@@ -37,7 +37,9 @@ type: text/vnd.tiddlywiki
 </$button> <$button>Stop
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> />
+<$set name="wssIndex" tiddler=<<stateTiddler>> field="wss_index">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> wsServerStateTiddler=<<stateTiddler>> wss_index=<<wssIndex>>/>
+</$set>
 </$set>
 </$set>
 </$button></td><td align="center"><$link to={{!!title}}><<alias>></$link></td>

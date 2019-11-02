@@ -102,7 +102,7 @@ module-type: startup
 
 
             // Report success and new WSS index back to caller
-            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress} ));
+            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress, server_state: 'Running'} ));
 
 
         } catch (e) {
@@ -115,6 +115,12 @@ module-type: startup
         console.log("WebSocketMonitorMessageHandlers.stop_websocket_server -->");
         console.log(data);
         console.log("<--");
+
+        $tw.websocketServer[data["wss_index"]].close();
+
+        // Report result to caller
+        $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'stopped_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: data["wss_index"], server_state: 'Closed'} ));
+
     }
 
     /*
@@ -189,7 +195,7 @@ module-type: startup
 
             if (WebServerType !== "Unknown") {
                 // Report success and new WSS index back to caller
-                $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: newServerIx, serverAddress: 'TBD'} ));
+                $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: newServerIx, serverAddress: 'TBD', server_state: 'Running'} ));
             }
 
         } catch (e) {
@@ -400,6 +406,12 @@ module-type: startup
         console.log("WebSocketMonitorMessageHandlers.stop_web_server -->");
         console.log(data);
         console.log("<--");
+
+        $tw.webServer[data["web_server_index"]].close();
+
+        // Report result to caller
+        $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'stopped_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: data["web_server_index"], server_state: 'Closed'} ));
+
     }
 
     function handleConnectionThisWebSocket(wss_index) {

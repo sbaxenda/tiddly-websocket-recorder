@@ -44,9 +44,24 @@ module-type: startup
         let wsStateTiddler = data.stateTiddler;
         let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
         let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler, 
-                                                   {"wss_index": data.wss_index},
+                                                  {"wss_index": data.wss_index,
+                                                   "server_state": data.server_state},
                                                   $tw.wiki.getModificationFields());
         console.log("started_websocket_server: updatedState: ", updatedStateTiddler);
+		$tw.wiki.addTiddler(updatedStateTiddler);
+
+        $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
+    }
+
+    $tw.browserMessageHandlers.stopped_websocket_server = function(websocket_ix, data) {
+        console.log(" $tw.browserMessageHandlers.stopped_websocket_server: ...");
+        // Update state tiddler for websocket server with ServerIndex
+        let wsStateTiddler = data.stateTiddler;
+        let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
+        let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler,
+                                                   {"server_state": data.server_state},
+                                                  $tw.wiki.getModificationFields());
+        console.log("stopped_websocket_server: updatedState: ", updatedStateTiddler);
 		$tw.wiki.addTiddler(updatedStateTiddler);
 
         $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
@@ -58,9 +73,24 @@ module-type: startup
         let wsStateTiddler = data.stateTiddler;
         let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
         let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler,
-                                                   {"web_server_index": data.web_server_index},
+                                                  {"web_server_index": data.web_server_index,
+                                                   "server_state": data.server_state},
                                                   $tw.wiki.getModificationFields());
         console.log("started_web_server: updatedState: ", updatedStateTiddler);
+		$tw.wiki.addTiddler(updatedStateTiddler);
+
+        $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");
+    }
+
+    $tw.browserMessageHandlers.stopped_web_server = function(websocket_ix, data) {
+        console.log(" $tw.browserMessageHandlers.stopped_web_server: ...");
+        // Update state tiddler for web server with ServerIndex
+        let wsStateTiddler = data.stateTiddler;
+        let currentStateTiddler = $tw.wiki.getTiddler(wsStateTiddler);
+        let updatedStateTiddler = new $tw.Tiddler(currentStateTiddler,
+                                                   {"server_state": data.server_state},
+                                                  $tw.wiki.getModificationFields());
+        console.log("stopped_web_server: updatedState: ", updatedStateTiddler);
 		$tw.wiki.addTiddler(updatedStateTiddler);
 
         $tw.browserMessageUtil.logMessageToTiddler(websocket_ix, data, "from EP");

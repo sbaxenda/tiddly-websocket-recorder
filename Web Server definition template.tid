@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191030102529948
+modified: 20191102075429753
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -40,7 +40,9 @@ type: text/vnd.tiddlywiki
 <$button>Stop
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_web_server" protocol=<<protocol>> port=<<port>> />
+<$set name="webServerIndex" tiddler=<<stateTiddler>> field="web_server_index">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_web_server" protocol=<<protocol>> port=<<port>> wsServerStateTiddler=<<stateTiddler>> web_server_index=<<webServerIndex>> />
+</$set>
 </$set>
 </$set>
 </$button>
@@ -58,3 +60,5 @@ type: text/vnd.tiddlywiki
 | !Security |<|<|<|
 |!Certificate |!Key |!DH params |!Path |
 | <$edit-text tiddler=<<stateTiddler>> field="cert-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="key-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="dh-params-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="security-path" size=30/> |
+
+</$set>

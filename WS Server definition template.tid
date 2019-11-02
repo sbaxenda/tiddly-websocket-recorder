@@ -1,5 +1,5 @@
 created: 20191008021755441
-modified: 20191029021317976
+modified: 20191102064652374
 revision: 0
 title: WS Server definition template
 type: text/vnd.tiddlywiki
@@ -20,7 +20,9 @@ type: text/vnd.tiddlywiki
 <$button>Stop
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> />
+<$set name="wssIndex" tiddler=<<stateTiddler>> field="wss_index">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> wss_index=<<wssIndex>> />
+</$set>
 </$set>
 </$set>
 </$button>

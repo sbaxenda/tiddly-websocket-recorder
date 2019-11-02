@@ -1,5 +1,5 @@
 created: 20191028115927475
-modified: 20191028120021787
+modified: 20191102081938051
 revision: 0
 tags: 
 title: clear WebServer states
@@ -8,7 +8,7 @@ type: text/vnd.tiddlywiki
 <$button>`Clear WebServer states:`<br/>
 <$list filter="[prefix[$:/Web-Server-State]has[server]]">
 <<currentTiddler>> [for <$transclude field="server" />]<br/>
-<$action-setfield $field="web_server_index" $value=""/>
-<$action-setfield $field="ws-readystate" $value=""/>
+<$action-setfield $field="web_server_index" $value="-"/>
+<$action-setfield $field="ws-readystate" $value="-"/>
 </$list>
 </$button>
