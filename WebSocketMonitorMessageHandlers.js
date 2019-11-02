@@ -409,6 +409,9 @@ module-type: startup
 
         $tw.webServer[data["web_server_index"]].close();
 
+        // TODO: Close Client websocket and Forwarding WebSocket server
+        // Need to make these websockets visible outside the start...() function to call close() on them.
+
         // Report result to caller
         $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'stopped_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: data["web_server_index"], server_state: 'Closed'} ));
 
