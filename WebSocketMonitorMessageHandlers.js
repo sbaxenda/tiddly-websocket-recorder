@@ -319,35 +319,41 @@ module-type: startup
 
             let theSecureServer = https.createServer(optionsForwardingServer, (req, res) => {
 
+                // TODO: look at replacing this with https://github.com/TooTallNate/node-https-proxy-agent (or similar)
+
                 console.log("Request to forwardingServer listening on port: %s", port);
                 console.log("  req.url= ", req.url);
-                // console.log("  req=", req);
+
+                //const headerExclusions = ['host', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user'];
+                const headerExclusions = ['host'];
+
+                const forwardedHeaders = {};
+                for (let key in req.headers) {
+                    if (req.headers.hasOwnProperty(key) && (!headerExclusions.includes(key))) {
+                        forwardedHeaders[key] = req.headers[key];
+                    }
+                }
 
                 const forwardedOptions = {
                     hostname: WebServerForwardingHost,
                     port: WebServerForwardingPort,
                     path: req.url,
-                    method: req.method
+                    method: req.method,
+                    headers: forwardedHeaders
                 };
+                // console.log("  forwardedOptions.headers= ", forwardedOptions.headers);
+
 
                 const forwardedReq = https.request(forwardedOptions, (forwardedRes) => {
-                    // console.log('statusCode [internal]:', forwardedRes.statusCode);
-                    // console.log('headers [internal]:', forwardedRes.headers);
-
-                    forwardedRes.on('data', (d) => {
-                        res.write(d);
-                    });
-
-                    forwardedRes.on('end', () => {
-                        res.end();
+                    res.writeHead(forwardedRes.statusCode, forwardedRes.headers)
+                    forwardedRes.pipe(res, {
+                        end: true
                     });
                 });
 
-                forwardedReq.on('error', (e) => {
-                    console.error(e);
+                req.pipe(forwardedReq, {
+                    end: true
                 });
-                forwardedReq.end();
-
 
 	        });
 
