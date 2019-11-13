@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191102075429753
+modified: 20191113080606300
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -22,7 +22,11 @@ type: text/vnd.tiddlywiki
 <$set name="certFilename" tiddler=<<stateTiddler>> field="cert-filename">
 <$set name="keyFilename" tiddler=<<stateTiddler>> field="key-filename">
 <$set name="dhParamsFilename" tiddler=<<stateTiddler>> field="dh-params-filename">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> securityPath=<<securityPath>> certFilename=<<certFilename>> keyFilename=<<keyFilename>> dhParamsFilename=<<dhParamsFilename>> />
+<$set name="dnpKeyList" tiddler=<<stateTiddler>> field="do-not-persist-key-list">
+<$set name="ctfKeyList" tiddler=<<stateTiddler>> field="copy-to-field-key-list">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> securityPath=<<securityPath>> certFilename=<<certFilename>> keyFilename=<<keyFilename>> dhParamsFilename=<<dhParamsFilename>> dnpKeyList=<<dnpKeyList>> ctfKeyList=<<ctfKeyList>> />
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
@@ -60,5 +64,11 @@ type: text/vnd.tiddlywiki
 | !Security |<|<|<|
 |!Certificate |!Key |!DH params |!Path |
 | <$edit-text tiddler=<<stateTiddler>> field="cert-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="key-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="dh-params-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="security-path" size=30/> |
+
+
+| !Message key lists |<|
+| !Do not persist |<$edit-text tiddler=<<stateTiddler>> field="do-not-persist-key-list" size=60/> |
+| !Copy value to tiddler field |<$edit-text tiddler=<<stateTiddler>> field="copy-to-field-key-list" size=60/> |
+
 
 </$set>

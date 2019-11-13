@@ -51,8 +51,9 @@ module-type: startup
 	    res.write("\n");
 	}
 
-    function logMessageToTiddler(websocket, message, direction) {
+    function logMessageToTiddler(websocket, message, direction, doNotPersistKeyList, copyToFieldKeyList) {
 
+        
         function getBaseTitle(url, direction) {
             let msgNo;
             let returnVal;
@@ -61,6 +62,19 @@ module-type: startup
             return returnVal;
         }
 
+
+        /*// Abort processing if message has a do not persist key
+        let dnpKeys = doNotPersistKeyList.split(" ");
+        dnpKeys.forEach((key) => {
+            if (message.hasOwnProperty(key)) {
+                console.log("logMessageToTiddler(): Not persisting, message has key=", key);
+                return;
+            }
+            console.log("logMessageToTiddler(): persisting");
+
+        });*/
+
+        
         let theURL = `wss://${websocket._socket.remoteAddress}:${websocket._socket.remotePort}`;
 
         var tiddlerFields = {};
@@ -142,6 +156,8 @@ module-type: startup
         let WebServerWebsocketForwardingHost;
         let WebServerWebsocketForwardingPort;
         let WebServerWebsocketForwardingPath;
+        let WebServerWebsocketDoNotPersistKeyList;
+        let WebServerWebsocketCopyToFieldKeyList;
         let WebServerSecurityPath = data.securityPath;
         let WebServerCertFilename = data.certFilename;
         let WebServerKeyFilename = data.keyFilename;
@@ -155,6 +171,8 @@ module-type: startup
             WebServerWebsocketForwardingHost = data.forwardingWebsocketHost;
             WebServerWebsocketForwardingPort = data.forwardingWebsocketPort;
             WebServerWebsocketForwardingPath = data.forwardingWebsocketPath;
+            WebServerWebsocketDoNotPersistKeyList = data.dnpKeyList;
+            WebServerWebsocketCopyToFieldKeyList = data.ctfKeyList;
             console.log("  forwardingHost= ", WebServerForwardingHost);
             console.log("  forwardingPort= ", WebServerForwardingPort);
             console.log("  forwardingPath= ", WebServerForwardingPath);
@@ -165,6 +183,8 @@ module-type: startup
             console.log("  certFilename= ", WebServerCertFilename);
             console.log("  keyFilename= ", WebServerKeyFilename);
             console.log("  dhParamsFilename= ", WebServerDhParamsFilename);
+            console.log("  dnpKeyList= ", WebServerWebsocketDoNotPersistKeyList);
+            console.log("  ctfKeylist= ", WebServerWebsocketCopyToFieldKeyList);
         }
 
         var newServerIx = getWebServerIx();
@@ -366,6 +386,10 @@ module-type: startup
 	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
 	        //console.log("forwardingWss = ", forwardingWss);
 
+            let doNotPersistKeyList = WebServerWebsocketDoNotPersistKeyList;
+            let copyToFieldKeyList = WebServerWebsocketCopyToFieldKeyList;
+            
+
 	        forwardingWss.on('connection', function connection(ws) {
                 // console.log('forwardingWss new connection, ws= ',ws);
                 ws.on('message', function incoming(message) {
@@ -373,7 +397,7 @@ module-type: startup
                     forwardingWebSocketClient.send(message);
 
                     // log message "to EP..."
-                    logMessageToTiddler(ws, message, "to EP")
+                    logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList)
                  });
 
                 const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
@@ -384,7 +408,7 @@ module-type: startup
                     theClientWebSocket.send(message);
 
                     // log message "from EP ..."
-                    logMessageToTiddler(ws, message, "from EP")
+                    logMessageToTiddler(ws, message, "from EP", doNotPersistKeyList, copyToFieldKeyList)
 
                 };
 

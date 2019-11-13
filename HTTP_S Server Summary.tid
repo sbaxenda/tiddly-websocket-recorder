@@ -1,5 +1,5 @@
 created: 20191024034904991
-modified: 20191102075653327
+modified: 20191113080843964
 revision: 0
 title: HTTP/S Server Summary
 type: text/vnd.tiddlywiki
@@ -40,7 +40,11 @@ type: text/vnd.tiddlywiki
 <$set name="certFilename" tiddler=<<stateTiddler>> field="cert-filename">
 <$set name="keyFilename" tiddler=<<stateTiddler>> field="key-filename">
 <$set name="dhParamsFilename" tiddler=<<stateTiddler>> field="dh-params-filename">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> securityPath=<<securityPath>> certFilename=<<certFilename>> keyFilename=<<keyFilename>> dhParamsFilename=<<dhParamsFilename>> />
+<$set name="dnpKeyList" tiddler=<<stateTiddler>> field="do-not-persist-key-list">
+<$set name="ctfKeyList" tiddler=<<stateTiddler>> field="copy-to-field-key-list">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_web_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingHost=<<forwardingHost>> forwardingPort=<<forwardingPort>>  forwardingPath=<<forwardingPath>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> securityPath=<<securityPath>> certFilename=<<certFilename>> keyFilename=<<keyFilename>> dhParamsFilename=<<dhParamsFilename>> dnpKeyList=<<dnpKeyList>> ctfKeyList=<<ctfKeyList>> />
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
