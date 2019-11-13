@@ -63,17 +63,17 @@ module-type: startup
         }
 
 
-        /*// Abort processing if message has a do not persist key
+        let theMessage = JSON.parse(message);
+
+        // Abort processing if message has a do not persist key
         let dnpKeys = doNotPersistKeyList.split(" ");
-        dnpKeys.forEach((key) => {
-            if (message.hasOwnProperty(key)) {
-                console.log("logMessageToTiddler(): Not persisting, message has key=", key);
+        for (let key of dnpKeys) {
+            // console.log("logMessageToTiddler(): checking dnp key= ", key);
+            if (theMessage.hasOwnProperty(key)) {
+                // console.log("logMessageToTiddler(): Not persisting, message has key=", key);
                 return;
             }
-            console.log("logMessageToTiddler(): persisting");
-
-        });*/
-
+        }
         
         let theURL = `wss://${websocket._socket.remoteAddress}:${websocket._socket.remotePort}`;
 
@@ -86,8 +86,14 @@ module-type: startup
         tiddlerFields.websocketreadystate = websocket.readyState;
         //tiddlerFields.ws_connection_index = websocket_ix;  // Doesn't apply here
 
+        // copy specified message keys to tiddler fields
+        let ctfKeys = copyToFieldKeyList.split(" ");
+        for (let key of ctfKeys) {
+            tiddlerFields[key] = theMessage[key];
+            // console.log("logMessageToTiddler(): copying-to-field for key= ", key, " value= ", theMessage[key]);
+        }
+
         // Create a JSON Tiddler containing the JSON message
-        // var baseTitle = `${direction} ${theURL}`;
         tiddlerFields.title = $tw.wiki.generateNewTitle(getBaseTitle(theURL, direction));
         $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields,
                                             $tw.wiki.getCreationFields(),
