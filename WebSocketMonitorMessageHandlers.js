@@ -68,9 +68,7 @@ module-type: startup
         // Abort processing if message has a do not persist key
         let dnpKeys = doNotPersistKeyList.split(" ");
         for (let key of dnpKeys) {
-            // console.log("logMessageToTiddler(): checking dnp key= ", key);
             if (theMessage.hasOwnProperty(key)) {
-                // console.log("logMessageToTiddler(): Not persisting, message has key=", key);
                 return;
             }
         }
@@ -90,7 +88,6 @@ module-type: startup
         let ctfKeys = copyToFieldKeyList.split(" ");
         for (let key of ctfKeys) {
             tiddlerFields[key] = theMessage[key];
-            // console.log("logMessageToTiddler(): copying-to-field for key= ", key, " value= ", theMessage[key]);
         }
 
         // Create a JSON Tiddler containing the JSON message
@@ -105,8 +102,6 @@ module-type: startup
       WebSocket Server control messages
     */
     $tw.nodeMessageHandlers.start_websocket_server = function(data) {
-
-        // console.log(data);
 
         let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
         let PortNo = data.port;
@@ -132,10 +127,7 @@ module-type: startup
     }
 
     $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
-        console.log("WebSocketMonitorMessageHandlers.stop_websocket_server -->");
         console.log(data);
-        console.log("<--");
-
         $tw.websocketServer[data["wss_index"]].close();
 
         // Report result to caller
@@ -179,18 +171,18 @@ module-type: startup
             WebServerWebsocketForwardingPath = data.forwardingWebsocketPath;
             WebServerWebsocketDoNotPersistKeyList = data.dnpKeyList;
             WebServerWebsocketCopyToFieldKeyList = data.ctfKeyList;
-            console.log("  forwardingHost= ", WebServerForwardingHost);
-            console.log("  forwardingPort= ", WebServerForwardingPort);
-            console.log("  forwardingPath= ", WebServerForwardingPath);
-            console.log("  forwardingHost(ws)= ", WebServerWebsocketForwardingHost);
-            console.log("  forwardingPort(ws)= ", WebServerWebsocketForwardingPort);
-            console.log("  forwardingPath(ws)= ", WebServerWebsocketForwardingPath);
-            console.log("  securityPath= ", WebServerSecurityPath);
-            console.log("  certFilename= ", WebServerCertFilename);
-            console.log("  keyFilename= ", WebServerKeyFilename);
-            console.log("  dhParamsFilename= ", WebServerDhParamsFilename);
-            console.log("  dnpKeyList= ", WebServerWebsocketDoNotPersistKeyList);
-            console.log("  ctfKeylist= ", WebServerWebsocketCopyToFieldKeyList);
+            // console.log("  forwardingHost= ", WebServerForwardingHost);
+            // console.log("  forwardingPort= ", WebServerForwardingPort);
+            // console.log("  forwardingPath= ", WebServerForwardingPath);
+            // console.log("  forwardingHost(ws)= ", WebServerWebsocketForwardingHost);
+            // console.log("  forwardingPort(ws)= ", WebServerWebsocketForwardingPort);
+            // console.log("  forwardingPath(ws)= ", WebServerWebsocketForwardingPath);
+            // console.log("  securityPath= ", WebServerSecurityPath);
+            // console.log("  certFilename= ", WebServerCertFilename);
+            // console.log("  keyFilename= ", WebServerKeyFilename);
+            // console.log("  dhParamsFilename= ", WebServerDhParamsFilename);
+            // console.log("  dnpKeyList= ", WebServerWebsocketDoNotPersistKeyList);
+            // console.log("  ctfKeylist= ", WebServerWebsocketCopyToFieldKeyList);
         }
 
         var newServerIx = getWebServerIx();
@@ -233,7 +225,6 @@ module-type: startup
             let returnVal;
             try {
                 let filePath = `${path}/${filename}`;
-                console.log("readFile reading filename= ", filePath);
                 returnVal = fs.readFileSync(filePath);
             }
             catch(err) {
@@ -244,7 +235,6 @@ module-type: startup
 
         function startEchoWebServer(port) {
             let theServer = http.createServer({}, (req, res) => {
-                console.log("Request to EchoWebServer listening on port: ", port);
 
 	            const { method, url } = req;
 
@@ -264,7 +254,6 @@ module-type: startup
 
 	        wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
-		            console.log('EchoWebServer on port %s received: %s', port, message);
                     // echo back to sender
                     ws.send(message);
                 });
@@ -291,7 +280,6 @@ module-type: startup
 	        };
 
             let theSecureServer = https.createServer(optionsEchoServer, (req, res) => {
-                console.log("Request to SecureEchoWebServer listening on port: ", port);
 
 	            const { method, url } = req;
 
@@ -311,7 +299,6 @@ module-type: startup
 
 	        wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
-		            console.log('SecureEchoWebServer on port %s received: %s', port, message);
                     // echo back to sender
                     ws.send(message);
                 });
@@ -326,7 +313,6 @@ module-type: startup
             });
 
 	        theSecureServer.listen(port);
-            //console.log("theEcho SS - ", theSecureServer);
             return(theSecureServer);
         }
 
@@ -347,8 +333,8 @@ module-type: startup
 
                 // TODO: look at replacing this with https://github.com/TooTallNate/node-https-proxy-agent (or similar)
 
-                console.log("Request to forwardingServer listening on port: %s", port);
-                console.log("  req.url= ", req.url);
+                // console.log("Request to forwardingServer listening on port: %s", port);
+                // console.log("  req.url= ", req.url);
 
                 //const headerExclusions = ['host', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user'];
                 const headerExclusions = ['host'];
@@ -390,16 +376,13 @@ module-type: startup
             let theClientWebSocket;
 
 	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
-	        //console.log("forwardingWss = ", forwardingWss);
 
             let doNotPersistKeyList = WebServerWebsocketDoNotPersistKeyList;
             let copyToFieldKeyList = WebServerWebsocketCopyToFieldKeyList;
             
 
 	        forwardingWss.on('connection', function connection(ws) {
-                // console.log('forwardingWss new connection, ws= ',ws);
                 ws.on('message', function incoming(message) {
-		            console.log('forwardingWSS received: message= ', message);
                     forwardingWebSocketClient.send(message);
 
                     // log message "to EP..."
@@ -407,10 +390,8 @@ module-type: startup
                  });
 
                 const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
-                //console.log("forwardingWebSocketClient = ", forwardingWebSocketClient);
                 forwardingWebSocketClient.onmessage = function(event) {
                     let message = event.data;
-                    console.log("forwardingWebSocketClient: received message=", message);
                     theClientWebSocket.send(message);
 
                     // log message "from EP ..."
@@ -418,14 +399,11 @@ module-type: startup
 
                 };
 
-	            // ws.send(JSON.stringify({forwardingSecureServer: 'Opened forwardingWebSocketClient'}));
-                // console.log("*** ", $tw.wiki.getModificationFields());
-                // $tw.wiki.addTiddler(new $tw.Tiddler({title: "MaryLivesAgain", text: 'Hello from Node'}, $tw.wiki.getModificationFields()));
 	        });
 
             theSecureServer.on('upgrade', function upgrade(request, socket, head) {
                 forwardingWss.handleUpgrade(request, socket, head, function done(ws) {
-                    console.log("** handling upgrade done()");
+                    // console.log("** handling upgrade done()");
                     theClientWebSocket = ws;
                     forwardingWss.emit('connection', ws, request);
                 });
@@ -440,9 +418,6 @@ module-type: startup
     }
 
     $tw.nodeMessageHandlers.stop_web_server = function(data) {
-        console.log("WebSocketMonitorMessageHandlers.stop_web_server -->");
-        console.log(data);
-        console.log("<--");
 
         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("webSocketServer")) {
             $tw.webServer[data["web_server_index"]].webSocketServer.close();
