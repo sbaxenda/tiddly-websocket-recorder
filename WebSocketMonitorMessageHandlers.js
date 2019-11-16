@@ -106,8 +106,8 @@ module-type: startup
         let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
         let PortNo = data.port;
         let WSProtocol = data.protocol;
-        console.log(`starting WS Server at ${WSProtocol}://${IPAddress}:${PortNo}`);
         var newServerIx = getWebsocketServerIx();
+        console.log(`starting WS Server at ${WSProtocol}://${IPAddress}:${PortNo}, newServerIx=${newServerIx}`);
 
         try {
             $tw.websocketServer[newServerIx] = new WebSocketServer({port: PortNo});

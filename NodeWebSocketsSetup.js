@@ -89,7 +89,7 @@ module-type: startup
           }
         */
         function handleConnection(client) {
-            console.log("new connection");
+            console.log("Monitor WSS: new connection");
             $tw.connections.push({'socket':client, 'active': true});
             client.on('message', function incoming(event) {
                 var self = this;
