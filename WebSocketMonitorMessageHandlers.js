@@ -372,10 +372,12 @@ module-type: startup
             // Open client to forwarded WebSocketServer
             let fwdHost = WebServerWebsocketForwardingHost;
             let fwdPort = WebServerWebsocketForwardingPort;
-            let fwdPath = WebServerWebsocketForwardingPath;
+            // let fwdPath = WebServerWebsocketForwardingPath;
             let theClientWebSocket;
+            let forwardingWebSocketClient;
 
-	        const forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
+            let forwardingWss = new WebSocketServer({ noServer: true, theSecureServer });
+            theSecureServer.webSocketServer = forwardingWss;
 
             let doNotPersistKeyList = WebServerWebsocketDoNotPersistKeyList;
             let copyToFieldKeyList = WebServerWebsocketCopyToFieldKeyList;
@@ -389,7 +391,9 @@ module-type: startup
                     logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList)
                  });
 
-                const forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
+                let forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
+                theSecureServer.forwardingWebSocketClient = forwardingWebSocketClient;
+
                 forwardingWebSocketClient.onmessage = function(event) {
                     let message = event.data;
                     theClientWebSocket.send(message);
@@ -410,8 +414,6 @@ module-type: startup
             });
 
 	        theSecureServer.listen(port);
-            //console.log("theForwarding SS - ", theSecureServer);
-            theSecureServer.webSocketServer = forwardingWss;
             return(theSecureServer);
         }
 
@@ -420,7 +422,12 @@ module-type: startup
     $tw.nodeMessageHandlers.stop_web_server = function(data) {
 
         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("webSocketServer")) {
+            console.log("stop_web_server: closing webSocketServer");
             $tw.webServer[data["web_server_index"]].webSocketServer.close();
+        }
+        if ($tw.webServer[data["web_server_index"]].hasOwnProperty("forwardingWebSocketClient")) {
+            console.log("stop_web_server: closing forwardingWebSocketClient");
+            $tw.webServer[data["web_server_index"]].forwardingWebSocketClient.close();
         }
         $tw.webServer[data["web_server_index"]].close();
 
