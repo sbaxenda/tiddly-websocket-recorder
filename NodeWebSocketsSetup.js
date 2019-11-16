@@ -89,11 +89,13 @@ module-type: startup
           }
         */
         function handleConnection(client) {
-            console.log("Monitor WSS: new connection");
             $tw.connections.push({'socket':client, 'active': true});
+            console.log("Monitor WSS: new connection, $tw.connections.length= ", $tw.connections.length);
+
             client.on('message', function incoming(event) {
                 var self = this;
                 var thisIndex = $tw.connections.findIndex(function(connection) {return connection.socket === self;});
+                console.log("  thisIndex= ", thisIndex); 
                 if (typeof event === 'object') {
                     //console.log(Object.keys(event));
                 }
