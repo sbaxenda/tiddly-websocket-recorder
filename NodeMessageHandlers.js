@@ -31,9 +31,11 @@ module-type: startup
       Echo the received message back to client websocket
     */
     $tw.nodeMessageHandlers.echo = function(data) {
+        let serverIx = data.server_index;
         let clientIx = data.source_connection;
-        console.log("nodeMessageHandlers.echo, clientIx:", clientIx, " -->");
-        $tw.connections[clientIx].socket.send(JSON.stringify(data));
+
+        console.log(`nodeMessageHandlers.echo, serverIx: ${serverIx}, clientIx: ${clientIx} -->`);
+        $tw.websocketServer[serverIx].connections[clientIx].socket.send(JSON.stringify(data));
         console.log(data);
         console.log("<--");
     }
@@ -41,25 +43,21 @@ module-type: startup
     /*
       Report client connections
     */
-    $tw.nodeMessageHandlers.getMonitorClientConnections = function(data) {
+    $tw.nodeMessageHandlers.getServerClientConnections = function(data) {
+        let serverIx = data.server_index;
         let clientIx = data.source_connection;
-        console.log("nodeMessageHandlers.getMonitorClientConnections, clientIx:", clientIx, " -->");
-        let response = {clientCount: $tw.connections.length, clients: []};
-        for (const connection of $tw.connections) {
+
+        console.log(`nodeMessageHandlers.getServerClientConnections, serverIx: ${serverIx}, clientIx: ${clientIx} -->`);
+        let response = {clientCount: $tw.websocketServer[serverIx].connections.length, clients: []};
+        for (const connection of $tw.websocketServer[serverIx].connections) {
             let client = {};
             client.active = connection.active;
             client.socket = connection.socket;
             response.clients.push(client);
         }
-        $tw.connections[clientIx].socket.send(JSON.stringify(response));
+        $tw.websocketServer[serverIx].connections[clientIx].socket.send(JSON.stringify(response));
         console.log($tw.connections);
         console.log("<--");
-    }
-
-    $tw.nodeMessageHandlers.testsjb = function(data) {
-        console.log("nodeMessageHandlers.testsjb -- sjb -->");
-        console.log(data);
-        console.log("<-- sjb --");
     }
 
 })()

@@ -90,12 +90,14 @@ module-type: startup
         */
         function handleConnection(client) {
             $tw.connections.push({'socket':client, 'active': true});
-            console.log("Monitor WSS: new connection, $tw.connections.length= ", $tw.connections.length);
+            let clientIx =  $tw.connections.length - 1;
+            
+            console.log("Monitor WSS: new connection, clientIx= ", clientIx);
 
             client.on('message', function incoming(event) {
                 var self = this;
                 var thisIndex = $tw.connections.findIndex(function(connection) {return connection.socket === self;});
-                console.log("  thisIndex= ", thisIndex); 
+                // console.log("  thisIndex= ", thisIndex); 
                 if (typeof event === 'object') {
                     //console.log(Object.keys(event));
                 }
@@ -113,7 +115,7 @@ module-type: startup
                     console.log(e);
                 }
             });
-            $tw.connections[Object.keys($tw.connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS Monitor port', source: 'handleConnection', client: client}));
+            $tw.connections[Object.keys($tw.connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS Monitor port', source: 'handleConnection', clientIx: clientIx}));
         }
 
         //module.exports = setup;

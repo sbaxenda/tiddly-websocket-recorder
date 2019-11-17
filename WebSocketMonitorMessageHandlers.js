@@ -40,6 +40,7 @@ module-type: startup
     var getWebServerIx = makeCounter();
 
     $tw.monitorMessageHandlers = $tw.monitorMessageHandlers || {};
+    $tw.nodeMessageHandlers = $tw.nodeMessageHandlers || {};
     $tw.websocketServer = [];
     $tw.websocketServerConnections = [];
 
@@ -445,9 +446,14 @@ module-type: startup
 
     }
 
+    /*
+     * A new client websocket has connected to wss index serverIx
+     */
     function handleConnection(client, serverIx) {
         console.log("new connection on WSS server index: ", serverIx);
         $tw.websocketServer[serverIx].connections.push({'socket':client, 'active': true});
+        let clientIx = $tw.websocketServer[serverIx].connections.length - 1;
+        
         client.on('message', function incoming(event) {
             var self = this;
             var thisIndex = $tw.websocketServer[serverIx].connections.findIndex(function(connection) {return connection.socket === self;});
@@ -456,16 +462,17 @@ module-type: startup
                 // Add the source to the eventData object so it can be used later.
                 //eventData.source_connection = $tw.connections.indexOf(this);
                 eventData.source_connection = thisIndex;
-                if (typeof $tw.monitorMessageHandlers[eventData.messageType] === 'function') {
-                    $tw.monitorMessageHandlers[eventData.messageType](eventData);
+                eventData.server_index = serverIx;
+                if (typeof $tw.nodeMessageHandlers[eventData.messageType] === 'function') {
+                    $tw.nodeMessageHandlers[eventData.messageType](eventData);
                 } else {
-                    console.log('No handler for message of type ', eventData.messageType);
+                    console.log('No $tw.nodeMessageHandler for message of type ', eventData.messageType);
                 }
             } catch (e) {
                 console.log(e);
             }
         });
-        $tw.websocketServer[serverIx].connections[Object.keys($tw.websocketServer[serverIx].connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS ', source: 'handleConnection WSS', client: client}));
+        $tw.websocketServer[serverIx].connections[Object.keys($tw.websocketServer[serverIx].connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS handleConnection', source: 'handleConnection:', clientIx: clientIx, serverIx: serverIx}));
     }
 
     /*
@@ -505,24 +512,5 @@ module-type: startup
         console.log($tw.connections);
         console.log("<--");
     }
-
-    /*
-      Report client connections
-    */
-    $tw.monitorMessageHandlers.getServerClientConnections = function(data) {
-        let clientIx = data.source_connection;
-        console.log("monitorMessageHandlers.getServerClientConnections, clientIx:", clientIx, " -->");
-        let response = {clientCount: $tw.connections.length, clients: []};
-        for (const connection of $tw.connections) {
-            let client = {};
-            client.active = connection.active;
-            client.socket = connection.socket;
-            response.clients.push(client);
-        }
-        $tw.connections[clientIx].socket.send(JSON.stringify(response));
-        console.log($tw.connections);
-        console.log("<--");
-    }
-
 
 })()
