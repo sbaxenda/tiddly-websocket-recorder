@@ -39,7 +39,7 @@ module-type: startup
     var getWebsocketServerIx = makeCounter();
     var getWebServerIx = makeCounter();
 
-    $tw.nodeMessageHandlers = $tw.nodeMessageHandlers || {};
+    $tw.monitorMessageHandlers = $tw.monitorMessageHandlers || {};
     $tw.websocketServer = [];
     $tw.websocketServerConnections = [];
 
@@ -98,10 +98,20 @@ module-type: startup
     }
 
 
+    function makeConnectionHandler(serverIx) {
+        // let serverIx = getWebsockeServerIx();
+
+        console.log("makeConnectionHandler: serverIx =", serverIx);
+
+        return function(client) {
+            handleConnection(client, serverIx);
+        }
+    };
+    
     /*
       WebSocket Server control messages
     */
-    $tw.nodeMessageHandlers.start_websocket_server = function(data) {
+    $tw.monitorMessageHandlers.start_websocket_server = function(data) {
 
         let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
         let PortNo = data.port;
@@ -111,12 +121,11 @@ module-type: startup
 
         try {
             $tw.websocketServer[newServerIx] = new WebSocketServer({port: PortNo});
-            $tw.websocketServer[newServerIx].on('connection', handleConnectionThisWebSocket(newServerIx));
-            $tw.websocketServerConnections[newServerIx] = [];
-            let serverAddress = $tw.websocketServer[newServerIx].address();
-
+            $tw.websocketServer[newServerIx].connections = [];
+            $tw.websocketServer[newServerIx].on('connection', makeConnectionHandler(newServerIx));
 
             // Report success and new WSS index back to caller
+            let serverAddress = $tw.websocketServer[newServerIx].address();
             $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress, server_state: 'Running'} ));
 
 
@@ -126,7 +135,7 @@ module-type: startup
 
     }
 
-    $tw.nodeMessageHandlers.stop_websocket_server = function(data) {
+    $tw.monitorMessageHandlers.stop_websocket_server = function(data) {
         console.log(data);
         $tw.websocketServer[data["wss_index"]].close();
 
@@ -142,7 +151,7 @@ module-type: startup
       "wsServerStateTiddler":"$:/Web-Server-State-1448435960","forwardingHost":"www.google.com.au",
       "forwardingPort":"443"}
     */
-    $tw.nodeMessageHandlers.start_web_server = function(data) {
+    $tw.monitorMessageHandlers.start_web_server = function(data) {
 
         let WebServerProtocol = data.protocol;
         let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
@@ -419,7 +428,7 @@ module-type: startup
 
     }
 
-    $tw.nodeMessageHandlers.stop_web_server = function(data) {
+    $tw.monitorMessageHandlers.stop_web_server = function(data) {
 
         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("webSocketServer")) {
             console.log("stop_web_server: closing webSocketServer");
@@ -436,25 +445,19 @@ module-type: startup
 
     }
 
-    function handleConnectionThisWebSocket(wss_index) {
-        return function(client) {
-            handleConnection(wss_index, client);
-        }
-    }
-
-    function handleConnection(wss_index, client) {
-        console.log("new connection on WSS wss_index: ", wss_index);
-        $tw.websocketServerConnections[wss_index].push({'socket':client, 'active': true});
+    function handleConnection(client, serverIx) {
+        console.log("new connection on WSS server index: ", serverIx);
+        $tw.websocketServer[serverIx].connections.push({'socket':client, 'active': true});
         client.on('message', function incoming(event) {
             var self = this;
-            var thisIndex = $tw.websocketServerConnections[wss_index].findIndex(function(connection) {return connection.socket === self;});
+            var thisIndex = $tw.websocketServer[serverIx].connections.findIndex(function(connection) {return connection.socket === self;});
             try {
                 var eventData = JSON.parse(event);
                 // Add the source to the eventData object so it can be used later.
                 //eventData.source_connection = $tw.connections.indexOf(this);
                 eventData.source_connection = thisIndex;
-                if (typeof $tw.nodeMessageHandlers[eventData.messageType] === 'function') {
-                    $tw.nodeMessageHandlers[eventData.messageType](eventData);
+                if (typeof $tw.monitorMessageHandlers[eventData.messageType] === 'function') {
+                    $tw.monitorMessageHandlers[eventData.messageType](eventData);
                 } else {
                     console.log('No handler for message of type ', eventData.messageType);
                 }
@@ -462,15 +465,53 @@ module-type: startup
                 console.log(e);
             }
         });
-        $tw.websocketServerConnections[wss_index][Object.keys($tw.websocketServerConnections[wss_index]).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS ', source: 'handleConnection WSS', client: client}));
+        $tw.websocketServer[serverIx].connections[Object.keys($tw.websocketServer[serverIx].connections).length-1].socket.send(JSON.stringify({type: 'helloFromNodeWSS ', source: 'handleConnection WSS', client: client}));
+    }
+
+    /*
+      This is just a test function to make sure that everthing is working.
+      It just displays the contents of the data in the console.
+    */
+    $tw.monitorMessageHandlers.test = function(data) {
+        console.log("monitorMessageHandlers.test -->");
+        console.log(data);
+        console.log("<--");
+    }
+    /*
+      Echo the received message back to client websocket
+    */
+    $tw.monitorMessageHandlers.echo = function(data) {
+        let clientIx = data.source_connection;
+        console.log("monitorMessageHandlers.echo, clientIx:", clientIx, " -->");
+        $tw.connections[clientIx].socket.send(JSON.stringify(data));
+        console.log(data);
+        console.log("<--");
     }
 
     /*
       Report client connections
     */
-    $tw.nodeMessageHandlers.getServerClientConnections = function(data) {
+    $tw.monitorMessageHandlers.getMonitorClientConnections = function(data) {
         let clientIx = data.source_connection;
-        console.log("nodeMessageHandlers.getServerClientConnections, clientIx:", clientIx, " -->");
+        console.log("monitorMessageHandlers.getMonitorClientConnections, clientIx:", clientIx, " -->");
+        let response = {clientCount: $tw.connections.length, clients: []};
+        for (const connection of $tw.connections) {
+            let client = {};
+            client.active = connection.active;
+            client.socket = connection.socket;
+            response.clients.push(client);
+        }
+        $tw.connections[clientIx].socket.send(JSON.stringify(response));
+        console.log($tw.connections);
+        console.log("<--");
+    }
+
+    /*
+      Report client connections
+    */
+    $tw.monitorMessageHandlers.getServerClientConnections = function(data) {
+        let clientIx = data.source_connection;
+        console.log("monitorMessageHandlers.getServerClientConnections, clientIx:", clientIx, " -->");
         let response = {clientCount: $tw.connections.length, clients: []};
         for (const connection of $tw.connections) {
             let client = {};

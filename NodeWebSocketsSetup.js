@@ -8,7 +8,7 @@ module-type: startup
   side and make the action widget used to send messages to the node process.
 
   To extend this you make a new file that adds functions to the
-  $tw.nodeMessageHandlers object.
+  $tw.monitorMessageHandlers object.
 
 \*/
 (function(){
@@ -40,9 +40,9 @@ module-type: startup
         //var Git = $tw.node ? require('simple-git') : undefined;
         var fs = $tw.node ? require("fs"): undefined;
 
-        // initialise the empty $tw.nodeMessageHandlers object. This holds the functions that
-        // are used for each message type
-        $tw.nodeMessageHandlers = $tw.nodeMessageHandlers || {};
+        // initialise the empty $tw.monitorMessageHandlers object. This holds the functions that
+        // are used for each monitor message type
+        $tw.monitorMessageHandlers = $tw.monitorMessageHandlers || {};
 
         $tw.connections = [];
 
@@ -104,8 +104,8 @@ module-type: startup
                     // Add the source to the eventData object so it can be used later.
                     //eventData.source_connection = $tw.connections.indexOf(this);
                     eventData.source_connection = thisIndex;
-                    if (typeof $tw.nodeMessageHandlers[eventData.messageType] === 'function') {
-                        $tw.nodeMessageHandlers[eventData.messageType](eventData);
+                    if (typeof $tw.monitorMessageHandlers[eventData.messageType] === 'function') {
+                        $tw.monitorMessageHandlers[eventData.messageType](eventData);
                     } else {
                         console.log('No handler for message of type ', eventData.messageType);
                     }
