@@ -1,6 +1,6 @@
 created: 20191007130126214
-modified: 20191118061432777
-revision: 1
+modified: 20191118063206387
+revision: 0
 title: WebSocket Server Summary
 type: text/vnd.tiddlywiki
 
@@ -52,6 +52,4 @@ type: text/vnd.tiddlywiki
 </tbody>
 </table>
 
-[[tidy up|clear WSServer states]]
-
-{{delete-the-tiddlers-button}}
+|[[tidy up|clear WSServer states]]|{{delete-the-tiddlers-button}}|

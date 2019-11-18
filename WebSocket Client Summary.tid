@@ -1,5 +1,5 @@
 created: 20191007122454810
-modified: 20191118061450200
+modified: 20191118063115593
 revision: 0
 tags: 
 title: WebSocket Client Summary
@@ -36,6 +36,4 @@ type: text/vnd.tiddlywiki
 </tbody>
 </table>
 
-[[tidy up|Clear WebSocket Client States]]
-
-{{delete-the-tiddlers-button}}
+|[[tidy up|Clear WebSocket Client States]]|{{delete-the-tiddlers-button}}|

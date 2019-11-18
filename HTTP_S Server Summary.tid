@@ -1,6 +1,6 @@
 created: 20191024034904991
-modified: 20191118061337255
-revision: 1
+modified: 20191118063138009
+revision: 0
 title: HTTP/S Server Summary
 type: text/vnd.tiddlywiki
 
@@ -76,6 +76,4 @@ type: text/vnd.tiddlywiki
 </tbody>
 </table>
 
-[[tidy up|clear WebServer states]]
-
-{{delete-the-tiddlers-button}}
+|[[tidy up|clear WebServer states]]|{{delete-the-tiddlers-button}}|
