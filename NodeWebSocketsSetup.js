@@ -25,8 +25,14 @@ module-type: startup
 
     exports.startup = function() {
 
+        function uncaughtExceptionHandler(e) {
+            console.log("uncaughtExceptionHandler: exception= ", e);
+        }
+
         // TODO: do this properly (ie, securely)
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+        process.on('uncaughtException',uncaughtExceptionHandler);
 
         // copy in nodeWSS options from tiddly-websocket-recorder options settings
         var optionsTiddler = $tw.wiki.getTiddler('$:/plugins/sbaxenda/tiddly-websocket-recorder/base-options');

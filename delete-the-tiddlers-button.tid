@@ -1,0 +1,13 @@
+created: 20191118061136997
+modified: 20191118061410847
+revision: 2
+tags: 
+title: delete-the-tiddlers-button
+type: text/vnd.tiddlywiki
+
+<$button>
+Delete Message tiddlers!
+<$list filter="[has[websocketurl]] [prefix[from EP]] [prefix[to EP]]" variable="tidToDelete">
+<$action-deletetiddler $tiddler=<<tidToDelete>>/>
+</$list>
+</$button>
