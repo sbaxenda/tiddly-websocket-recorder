@@ -1,8 +1,13 @@
 created: 20191026114831297
-modified: 20191113080606300
+modified: 20191118053252512
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
+
+\define makeStateRef()
+$(stateTiddler)$!!server-type
+\end
+
 
 <$set name="stateTiddler" value=<<qualify '$:/Web-Server-State' >> >
 
@@ -55,12 +60,6 @@ type: text/vnd.tiddlywiki
 |!Protocol |!Port |!Server Type | !wss_index|!State|
 | {{select webserver protocol}}  | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
 
-| !Forwarding |<|<|
-| ! |!~WebServer|!~WebSocket|
-|!hostname|<$edit-text tiddler=<<stateTiddler>> field="forwarding-host" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-host" size=24/>|
-|!port|<$edit-text tiddler=<<stateTiddler>> field="forwarding-port" size=6/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-port" size=6/>|
-|!path|<$edit-text tiddler=<<stateTiddler>> field="forwarding-path" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-path" size=24/>|
-
 | !Security |<|<|<|
 |!Certificate |!Key |!DH params |!Path |
 | <$edit-text tiddler=<<stateTiddler>> field="cert-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="key-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="dh-params-filename" size=12/> | <$edit-text tiddler=<<stateTiddler>> field="security-path" size=30/> |
@@ -70,5 +69,14 @@ type: text/vnd.tiddlywiki
 | !Do not persist |<$edit-text tiddler=<<stateTiddler>> field="do-not-persist-key-list" size=60/> |
 | !Copy value to tiddler field |<$edit-text tiddler=<<stateTiddler>> field="copy-to-field-key-list" size=60/> |
 
+<$reveal type="match" state=<<makeStateRef>> text="Forwarding">
+
+| !Forwarding |<|<|
+| ! |!~WebServer|!~WebSocket|
+|!hostname|<$edit-text tiddler=<<stateTiddler>> field="forwarding-host" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-host" size=24/>|
+|!port|<$edit-text tiddler=<<stateTiddler>> field="forwarding-port" size=6/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-port" size=6/>|
+|!path|<$edit-text tiddler=<<stateTiddler>> field="forwarding-path" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-path" size=24/>|
+
+</$reveal>
 
 </$set>
