@@ -222,8 +222,13 @@ module-type: startup
             }
 
             if (WebServerType !== "Unknown") {
+
+                let webSocketRecorderState = "On"; // recording defaults to on
+                if ($tw.webServer[newServerIx].hasOwnProperty('forwardingWebSocketClient')) {
+                    webSocketRecorderState = forwardingWebSocketClient.recordWebSocketMessages;
+                }
                 // Report success and new WSS index back to caller
-                $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: newServerIx, serverAddress: 'TBD', server_state: 'Running'} ));
+                $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_web_server', stateTiddler: data.wsServerStateTiddler, web_server_index: newServerIx, serverAddress: 'TBD', server_state: 'Running', WebSocketRecorderState: webSocketRecorderState} ));
             }
 
         } catch (e) {
@@ -397,20 +402,23 @@ module-type: startup
                 ws.on('message', function incoming(message) {
                     forwardingWebSocketClient.send(message);
 
-                    // log message "to EP..."
-                    logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList)
-                 });
+                    if (forwardingWebSocketClient.recordWebSocketMessages === "On") {
+                        // log message "to EP..."
+                        logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList)
+                    }
+                });
 
                 let forwardingWebSocketClient = new WebSocket(`wss://${fwdHost}:${fwdPort}`);
+                forwardingWebSocketClient.recordWebSocketMessages = "On";
                 theSecureServer.forwardingWebSocketClient = forwardingWebSocketClient;
 
                 forwardingWebSocketClient.onmessage = function(event) {
                     let message = event.data;
                     theClientWebSocket.send(message);
-
-                    // log message "from EP ..."
-                    logMessageToTiddler(ws, message, "from EP", doNotPersistKeyList, copyToFieldKeyList)
-
+                    if (forwardingWebSocketClient.recordWebSocketMessages === "On") {
+                        // log message "from EP ..."
+                        logMessageToTiddler(ws, message, "from EP", doNotPersistKeyList, copyToFieldKeyList)
+                    }
                 };
 
 	        });
@@ -429,7 +437,7 @@ module-type: startup
 
     }
 
-    $tw.monitorMessageHandlers.stop_web_server = function(data) {
+     $tw.monitorMessageHandlers.stop_web_server = function(data) {
 
         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("webSocketServer")) {
             console.log("stop_web_server: closing webSocketServer");
@@ -446,6 +454,30 @@ module-type: startup
 
     }
 
+     $tw.monitorMessageHandlers.toggle_web_server_websocket_recorder_state = function(data) {
+         
+         let newState = "Off";
+
+         // console.log("$tw.webServer[data[web_server_index]]= ", $tw.webServer[data["web_server_index"]]);
+
+         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("forwardingWebSocketClient")) {
+            console.log("toggle_web_server_websocket_recorder_state: toggling WS recorder");
+            let currentState = $tw.webServer[data["web_server_index"]].forwardingWebSocketClient.recordWebSocketMessages;
+            if (currentState === "On") {
+                newState = "Off";
+            }
+            else {
+                newState = "On";
+            }
+            $tw.webServer[data["web_server_index"]].forwardingWebSocketClient.recordWebSocketMessages = newState;
+        }
+
+        // Report result to caller
+        $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'toggled_web_server_websocket_recorder_state', stateTiddler: data.wsServerStateTiddler, /*web_server_index: data["web_server_index"],*/ WebSocketRecorderState: newState} ));
+
+    }
+
+    
     /*
      * A new client websocket has connected to wss index serverIx
      */

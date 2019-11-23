@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191118053252512
+modified: 20191123072638394
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -55,10 +55,15 @@ $(stateTiddler)$!!server-type
 </$set>
 </$set>
 </$button>
+<$button>Recorder
+<$set name="webServerIndex" tiddler=<<stateTiddler>> field="web_server_index">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="toggle_web_server_websocket_recorder_state" wsServerStateTiddler=<<stateTiddler>> web_server_index=<<webServerIndex>> />
+</$set>
+</$button>
  &nbsp;&nbsp;&nbsp;
 
-|!Protocol |!Port |!Server Type | !wss_index|!State|
-| {{select webserver protocol}}  | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
+|!Protocol |!Port |!Server Type | !wss_index|!State |!Msg Recorder |
+| {{select webserver protocol}}  | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select web server type}} | <$transclude tiddler=<<stateTiddler>> field="web_server_index" /> | <$transclude tiddler=<<stateTiddler>> field="server_state" /> | <$transclude tiddler=<<stateTiddler>> field="WebSocketRecorderState" /> |
 
 | !Security |<|<|<|
 |!Certificate |!Key |!DH params |!Path |
