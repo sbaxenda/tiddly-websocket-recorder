@@ -52,7 +52,7 @@ module-type: startup
 	    res.write("\n");
 	}
 
-    function logMessageToTiddler(websocket, message, direction, doNotPersistKeyList, copyToFieldKeyList) {
+    function logMessageToTiddler(websocket, message, direction, doNotPersistKeyList, copyToFieldKeyList, eventMarkerList) {
 
         
         function getBaseTitle(url, direction) {
@@ -61,6 +61,12 @@ module-type: startup
             // returnVal = `${direction} ${websocket.url} ${msgNo}`;
             returnVal = `${direction} ${url}/ `;
             return returnVal;
+        }
+
+        function addEventMarkerFields(fields, markers) {
+            for (let marker of markers) {
+                fields[marker] = "active";
+            }
         }
 
 
@@ -80,6 +86,7 @@ module-type: startup
         tiddlerFields.type = "application/json";
         tiddlerFields.direction = direction;
         tiddlerFields.text = message;
+        addEventMarkerFields(tiddlerFields, eventMarkerList);
 
         tiddlerFields.websocketurl = theURL;
         tiddlerFields.websocketreadystate = websocket.readyState;
@@ -396,7 +403,10 @@ module-type: startup
 
             let doNotPersistKeyList = WebServerWebsocketDoNotPersistKeyList;
             let copyToFieldKeyList = WebServerWebsocketCopyToFieldKeyList;
-            
+
+            // Fields [names] can only contain lowercase letters, digits and the characters underscore (_),
+            // hyphen (-) and period (.)
+            theSecureServer.eventMarkers = [];
 
 	        forwardingWss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
@@ -404,7 +414,7 @@ module-type: startup
 
                     if (forwardingWebSocketClient.recordWebSocketMessages === "On") {
                         // log message "to EP..."
-                        logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList)
+                        logMessageToTiddler(ws, message, "to EP", doNotPersistKeyList, copyToFieldKeyList, theSecureServer.eventMarkers)
                     }
                 });
 
@@ -417,7 +427,7 @@ module-type: startup
                     theClientWebSocket.send(message);
                     if (forwardingWebSocketClient.recordWebSocketMessages === "On") {
                         // log message "from EP ..."
-                        logMessageToTiddler(ws, message, "from EP", doNotPersistKeyList, copyToFieldKeyList)
+                        logMessageToTiddler(ws, message, "from EP", doNotPersistKeyList, copyToFieldKeyList, theSecureServer.eventMarkers)
                     }
                 };
 
@@ -454,13 +464,13 @@ module-type: startup
 
     }
 
-     $tw.monitorMessageHandlers.toggle_web_server_websocket_recorder_state = function(data) {
-         
-         let newState = "Off";
+    $tw.monitorMessageHandlers.toggle_web_server_websocket_recorder_state = function(data) {
+        
+        let newState = "Off";
 
-         // console.log("$tw.webServer[data[web_server_index]]= ", $tw.webServer[data["web_server_index"]]);
+        // console.log("$tw.webServer[data[web_server_index]]= ", $tw.webServer[data["web_server_index"]]);
 
-         if ($tw.webServer[data["web_server_index"]].hasOwnProperty("forwardingWebSocketClient")) {
+        if ($tw.webServer[data["web_server_index"]].hasOwnProperty("forwardingWebSocketClient")) {
             console.log("toggle_web_server_websocket_recorder_state: toggling WS recorder");
             let currentState = $tw.webServer[data["web_server_index"]].forwardingWebSocketClient.recordWebSocketMessages;
             if (currentState === "On") {
@@ -474,6 +484,22 @@ module-type: startup
 
         // Report result to caller
         $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'toggled_web_server_websocket_recorder_state', stateTiddler: data.wsServerStateTiddler, /*web_server_index: data["web_server_index"],*/ WebSocketRecorderState: newState} ));
+
+    }
+
+    $tw.monitorMessageHandlers.set_web_server_websocket_event_markers = function(data) {
+        
+        let eventMarkers = data.event_markers;
+        let eventMarkerList = eventMarkers.split(" ");
+
+        if ($tw.webServer[data["web_server_index"]].hasOwnProperty("eventMarkers")) {
+            
+            $tw.webServer[data["web_server_index"]].eventMarkers = eventMarkerList;
+            console.log("set_web_server_websocket_event_marker: eventMarkers= ", eventMarkers);
+        }
+
+        // Report result to caller
+        $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'set_web_server_websocket_event_markers', stateTiddler: data.wsServerStateTiddler,  event_markers: eventMarkers} ));
 
     }
 

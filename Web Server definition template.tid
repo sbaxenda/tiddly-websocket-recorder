@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191123072638394
+modified: 20191123152046282
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -83,5 +83,14 @@ $(stateTiddler)$!!server-type
 |!path|<$edit-text tiddler=<<stateTiddler>> field="forwarding-path" size=24/>|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-path" size=24/>|
 
 </$reveal>
+
+''Event Markers:''  <$edit-text tiddler=<<stateTiddler>> field="event-markers" size=24/>
+<!--
+<$set name ="activeEventList" tiddler=<<stateTiddler>> field="event-markers">
+<$list filter="[enlist<activeEventList>]">
+
+</$list>
+</$set>
+-->
 
 </$set>
