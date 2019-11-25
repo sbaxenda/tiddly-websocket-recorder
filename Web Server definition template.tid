@@ -1,5 +1,5 @@
 created: 20191026114831297
-modified: 20191123152046282
+modified: 20191123153409241
 revision: 0
 title: Web Server definition template
 type: text/vnd.tiddlywiki
@@ -85,6 +85,14 @@ $(stateTiddler)$!!server-type
 </$reveal>
 
 ''Event Markers:''  <$edit-text tiddler=<<stateTiddler>> field="event-markers" size=24/>
+<$button>
+Set
+<$set name="webServerIndex" tiddler=<<stateTiddler>> field="web_server_index">
+<$set name="eventMarkers" tiddler=<<stateTiddler>> field="event-markers">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="set_web_server_websocket_event_markers" wsServerStateTiddler=<<stateTiddler>> web_server_index=<<webServerIndex>> event_markers=<<eventMarkers>> />
+</$set>
+</$set>
+</$button>
 <!--
 <$set name ="activeEventList" tiddler=<<stateTiddler>> field="event-markers">
 <$list filter="[enlist<activeEventList>]">
