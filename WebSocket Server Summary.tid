@@ -1,6 +1,5 @@
 created: 20191007130126214
-modified: 20191118063206387
-revision: 0
+modified: 20200128081313558
 title: WebSocket Server Summary
 type: text/vnd.tiddlywiki
 
@@ -30,7 +29,13 @@ type: text/vnd.tiddlywiki
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
 <$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+<$set name="forwardingWebsocketHost" tiddler=<<stateTiddler>> field="forwarding-websocket-host">
+<$set name="forwardingWebsocketPort" tiddler=<<stateTiddler>> field="forwarding-websocket-port">
+<$set name="forwardingWebsocketPath" tiddler=<<stateTiddler>> field="forwarding-websocket-path">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> />
+</$set>
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>

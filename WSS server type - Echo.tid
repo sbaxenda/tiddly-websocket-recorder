@@ -1,8 +1,7 @@
 created: 20191013055731577
-description: returns messages to client sender unadulterated
+description: returns client generated messages to sender unadulterated
 display-seq: 2
-modified: 20191013060909717
-revision: 0
+modified: 20200128072548702
 short-name: Echo
 tags: 
 title: WSS server type - Echo

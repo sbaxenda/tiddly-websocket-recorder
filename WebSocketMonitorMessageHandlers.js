@@ -106,13 +106,13 @@ module-type: startup
     }
 
 
-    function makeConnectionHandler(serverIx) {
+    function makeConnectionHandler(serverIx, webSocketServerType) {
         // let serverIx = getWebsockeServerIx();
 
-        console.log("makeConnectionHandler: serverIx =", serverIx);
+        console.log(`makeConnectionHandler: serverIx= ${serverIx}, wssType= ${webSocketServerType}`);
 
         return function(client) {
-            handleConnection(client, serverIx);
+            handleConnection(client, serverIx, webSocketServerType);
         }
     };
     
@@ -124,17 +124,27 @@ module-type: startup
         let IPAddress = "dummyNonsense";  // TODO: Link up to IP address tiddler
         let PortNo = data.port;
         let WSProtocol = data.protocol;
+        let serverType = data.serverType;
+
+        let fwdProt = WSProtocol;
+        let fwdHost = data.forwardingWebsocketHost;
+        let fwdPort = data.forwardingWebsocketPort;
+        //let fwdPath = data.forwardingWebsocketPath;
+
+        let fwdWebSocketParams = {protocol: fwdProt, host: fwdHost, port: fwdPort};
+
         var newServerIx = getWebsocketServerIx();
-        console.log(`starting WS Server at ${WSProtocol}://${IPAddress}:${PortNo}, newServerIx=${newServerIx}`);
+        console.log(`starting WS Server at ${WSProtocol}://${IPAddress}:${PortNo}, newServerIx=${newServerIx}, type=${serverType}`);
 
         try {
             $tw.websocketServer[newServerIx] = new WebSocketServer({port: PortNo});
             $tw.websocketServer[newServerIx].connections = [];
-            $tw.websocketServer[newServerIx].on('connection', makeConnectionHandler(newServerIx));
+            $tw.websocketServer[newServerIx].fwdWebSocketParams = fwdWebSocketParams;
+            $tw.websocketServer[newServerIx].on('connection', makeConnectionHandler(newServerIx, serverType));
 
             // Report success and new WSS index back to caller
             let serverAddress = $tw.websocketServer[newServerIx].address();
-            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress, server_state: 'Running'} ));
+            $tw.connections[data.source_connection].socket.send(JSON.stringify({messageType: 'started_websocket_server', stateTiddler: data.wsServerStateTiddler, wss_index: newServerIx, serverAddress: serverAddress, server_state: 'Running', serverType: serverType} ));
 
 
         } catch (e) {
@@ -503,14 +513,64 @@ module-type: startup
 
     }
 
+    function wssEchoMessageHandler(data) {
+
+        let serverIx = data.server_index;
+        let clientIx = data.source_connection;
+
+        // Remove processing indices from reply
+        delete data.server_index;
+        delete data.source_connection;
+
+        console.log(`wssEchoMessageHandler, serverIx: ${serverIx}, clientIx: ${clientIx} -->`);
+        $tw.websocketServer[serverIx].connections[clientIx].socket.send(JSON.stringify(data));
+        console.log(data);
+        console.log("<--");
+    }
+
+    function wssMalcolmMessageHandler(data, forwardingClientWebSocket) {
+        let serverIx = data.server_index;
+        let clientIx = data.source_connection;
+
+        // Remove processing indices from message to forward
+        delete data.server_index;
+        delete data.source_connection;
+
+        console.log(`wssMalcolmMessageHandler, serverIx: ${serverIx}, clientIx: ${clientIx} -->`);
+        forwardingClientWebSocket.send(JSON.stringify(data));
+        console.log(data);
+        console.log("<--");
+    }
+
     
     /*
      * A new client websocket has connected to wss index serverIx
      */
-    function handleConnection(client, serverIx) {
+    function handleConnection(client, serverIx, serverType) {
         console.log("new connection on WSS server index: ", serverIx);
         $tw.websocketServer[serverIx].connections.push({'socket':client, 'active': true});
         let clientIx = $tw.websocketServer[serverIx].connections.length - 1;
+
+        // Open Client WebSocket for Malcolm (Forwarding) type server connections
+        let forwardingWebSocketClient;
+        if (serverType === "Malcolm") {
+            let fwdWebSocketParams = $tw.websocketServer[serverIx].fwdWebSocketParams;
+            let fwdProt = fwdWebSocketParams.protocol;
+            let fwdHost = fwdWebSocketParams.host;
+            let fwdPort = fwdWebSocketParams.port;
+            //let fwdPath = ;
+
+            console.log(`handleConnection: Malcolm type, opening fwd Client WS to ${fwdProt}://${fwdHost}:${fwdPort}`);
+            forwardingWebSocketClient = new WebSocket(`${fwdProt}://${fwdHost}:${fwdPort}`);
+
+            forwardingWebSocketClient.onmessage = function(event) {
+                let message = event.data;
+                client.send(message);
+                // log message "from EP ..."
+                logMessageToTiddler(client, message, "from EP", "", "", "")
+            };
+        }
+
         
         client.on('message', function incoming(event) {
             var self = this;
@@ -521,11 +581,21 @@ module-type: startup
                 //eventData.source_connection = $tw.connections.indexOf(this);
                 eventData.source_connection = thisIndex;
                 eventData.server_index = serverIx;
-                if (typeof $tw.nodeMessageHandlers[eventData.messageType] === 'function') {
-                    $tw.nodeMessageHandlers[eventData.messageType](eventData);
-                } else {
-                    console.log('No $tw.nodeMessageHandler for message of type ', eventData.messageType);
+
+                if (serverType === "Echo") {
+                    wssEchoMessageHandler(eventData);
                 }
+                else if (serverType === "Malcolm") {
+                    wssMalcolmMessageHandler(eventData, forwardingWebSocketClient);
+                }
+                else {  // default to Node Message handler
+                    if (typeof $tw.nodeMessageHandlers[eventData.messageType] === 'function') {
+                        $tw.nodeMessageHandlers[eventData.messageType](eventData);
+                    } else {
+                        console.log('No $tw.nodeMessageHandler for message of type ', eventData.messageType);
+                    }
+                }
+
             } catch (e) {
                 console.log(e);
             }

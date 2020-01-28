@@ -1,8 +1,13 @@
 created: 20191008021755441
-modified: 20191102064652374
-revision: 0
+modified: 20200128082946269
+state-tiddler: $:/WS-Server-State-2054838151
 title: WS Server definition template
 type: text/vnd.tiddlywiki
+
+\define makeStateRef()
+$(stateTiddler)$!!server-type
+\end
+
 
 <$set name="stateTiddler" value=<<qualify '$:/WS-Server-State' >> >
 
@@ -12,7 +17,13 @@ type: text/vnd.tiddlywiki
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
 <$set name="serverType" tiddler=<<stateTiddler>> field="server-type">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> />
+<$set name="forwardingWebsocketHost" tiddler=<<stateTiddler>> field="forwarding-websocket-host">
+<$set name="forwardingWebsocketPort" tiddler=<<stateTiddler>> field="forwarding-websocket-port">
+<$set name="forwardingWebsocketPath" tiddler=<<stateTiddler>> field="forwarding-websocket-path">
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="start_websocket_server" protocol=<<protocol>> port=<<port>> serverType=<<serverType>> wsServerStateTiddler=<<stateTiddler>> forwardingWebsocketHost=<<forwardingWebsocketHost>> forwardingWebsocketPort=<<forwardingWebsocketPort>> forwardingWebsocketPath=<<forwardingWebsocketPath>> />
+</$set>
+</$set>
+</$set>
 </$set>
 </$set>
 </$set>
@@ -21,7 +32,7 @@ type: text/vnd.tiddlywiki
 <$set name="protocol" tiddler=<<stateTiddler>> field="protocol">
 <$set name="port" tiddler=<<stateTiddler>> field="port">
 <$set name="wssIndex" tiddler=<<stateTiddler>> field="wss_index">
-<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> wss_index=<<wssIndex>> />
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type="stop_websocket_server" protocol=<<protocol>> port=<<port>> wsServerStateTiddler=<<stateTiddler>> wss_index=<<wssIndex>> />
 </$set>
 </$set>
 </$set>
@@ -29,6 +40,15 @@ type: text/vnd.tiddlywiki
  &nbsp;&nbsp;&nbsp;
 
 |!Protocol |!Port |!Server Type | !wss_index|!State|
-| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select wss type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="ws-readystate" /> |
+| <$edit-text tiddler=<<stateTiddler>> field="protocol" size=4 /> | <$edit-text tiddler=<<stateTiddler>> field="port" size=6/> | {{select wss type}} | <$transclude tiddler=<<stateTiddler>> field="wss_index" /> | <$transclude tiddler=<<stateTiddler>> field="server_state" /> |
+
+<$reveal type="match" state=<<makeStateRef>> text="Malcolm">
+
+|!On server side Forward Websocket to (Malcolm in the middle style) |<|
+|!hostname|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-host" size=24/>|
+|!port|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-port" size=6/>|
+|!path|<$edit-text tiddler=<<stateTiddler>> field="forwarding-websocket-path" size=24/>|
+
+</$reveal>
 
 </$set>
