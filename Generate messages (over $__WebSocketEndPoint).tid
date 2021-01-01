@@ -1,5 +1,5 @@
 created: 20190204144353456
-modified: 20191012070833693
+modified: 20201230143815408
 revision: 0
 tags: message-generator
 title: Generate messages (over $:/WebSocketEndPoint)
@@ -14,6 +14,26 @@ $type='test'
 <$button>
 $type='echo'
 <$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='echo' param='hi' />
+</$button>
+
+<$button>
+$type='execShellCommand'
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='execShellCommand' command='pwd' />
+</$button>
+
+<$button>
+$type='execShellCommand' (ls -asl)
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='execShellCommand' command='ls -asl' />
+</$button>
+
+<$button>
+$type='execShellCommand' (ls -asl ~)
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='execShellCommand' command='ls -asl ~' />
+</$button>
+
+<$button>
+$type='execShellCommand' (ps -ef)
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='execShellCommand' command='ps -ef' />
 </$button>
 
 <$button>

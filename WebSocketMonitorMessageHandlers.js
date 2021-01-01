@@ -105,6 +105,21 @@ module-type: startup
                                             $tw.wiki.getModificationFields()));
     }
 
+    function logExecShellOutputToTiddler(baseTitle, output, error, stderr) {
+
+        var tiddlerFields = {};
+        tiddlerFields.type = "text/plain";
+        tiddlerFields.text = output;
+        tiddlerFields.execShellCommandError = error;
+        tiddlerFields.execShellCommandStderror = stderr;
+
+        // Create a Tiddler containing the execCommand output
+        tiddlerFields.title = $tw.wiki.generateNewTitle(baseTitle);
+        $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields,
+                                            $tw.wiki.getCreationFields(),
+                                            $tw.wiki.getModificationFields()));
+    }
+
 
     function makeConnectionHandler(serverIx, webSocketServerType) {
         // let serverIx = getWebsockeServerIx();
@@ -623,6 +638,44 @@ module-type: startup
         console.log("<--");
     }
 
+    /*
+      Execute supplied OS Shell command and return output as a tiddler (a la Timimi early version)
+    */
+    $tw.monitorMessageHandlers.execShellCommand = function(data) {
+        let serverIx = data.server_index;
+        let clientIx = data.source_connection;
+
+        console.log(`nodeMessageHandlers.execShellCommand, serverIx: ${serverIx}, clientIx: ${clientIx} -->`);
+        console.log(data);
+        console.log("<--");
+
+        const { exec } = require("child_process");
+
+        let execShellCommandOutput = "";
+        let execShellCommandError = "";
+        let execShellCommandStderr = "";
+
+        exec(data["command"], (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                execShellCommandError = error.message;
+                //return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                execShellCommandStderr = stderr;
+                //return;
+            }
+            console.log(`stdout: ${stdout}`);
+            execShellCommandOutput = stdout;
+            logExecShellOutputToTiddler("execShellCommand result",
+                                        execShellCommandOutput,
+                                        execShellCommandError,
+                                        execShellCommandStderr);
+        });
+    }
+
+   
     /*
       Report client connections
     */
