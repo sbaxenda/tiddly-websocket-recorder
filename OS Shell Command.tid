@@ -1,0 +1,39 @@
+created: 20210103111109304
+modified: 20210103132808299
+revision: 0
+tags: gc
+title: OS Shell Command
+type: text/vnd.tiddlywiki
+
+<$set name="stateTiddler" value=<<qualify '$:/OS-Shell-Command' >> >
+
+<!--
+`stateTiddler:` <<stateTiddler>> <br/>
+-->
+
+|Command: |<$edit-text tiddler=<<stateTiddler>> field="os-shell-command" size=40/>|
+|Output Tiddler: |<$edit-text tiddler=<<stateTiddler>> field="os-shell-output-tiddler-name" size=20/>|
+ <$button>Nike
+<$set name="osShellCommand" tiddler=<<stateTiddler>> field="os-shell-command">
+<$set name="osShellOutputTiddlerName" tiddler=<<stateTiddler>> field="os-shell-output-tiddler-name">
+
+<$action-websocketmessage $server={{$:/WebSocketEndPoint!!state-tiddler}} $type='execShellCommand' command= <<osShellCommand>> outputTiddlerName=<<osShellOutputTiddlerName>> />
+
+<!--
+`osShellCommand:` <<osShellCommand>> 
+
+-->
+</$set>
+</$set>
+
+</$button>
+
+</$set>
+
+<hr/>
+
+!!! Results
+
+{{delete-the-os-shell-command-results-tiddlers}}
+
+<<list-links "[has[execShellCommand]!sort[created]]">>

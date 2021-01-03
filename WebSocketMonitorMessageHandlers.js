@@ -105,7 +105,7 @@ module-type: startup
                                             $tw.wiki.getModificationFields()));
     }
 
-    function logExecShellOutputToTiddler(baseTitle, output, error, stderr) {
+    function logExecShellOutputToTiddler(request, output, error, stderr) {
 
         var tiddlerFields = {};
         tiddlerFields.type = "text/plain";
@@ -113,8 +113,11 @@ module-type: startup
         tiddlerFields.execShellCommandError = error;
         tiddlerFields.execShellCommandStderror = stderr;
 
+        let outputTiddlerName = request["outputTiddlerName"] || "execShellCommand result";
+
         // Create a Tiddler containing the execCommand output
-        tiddlerFields.title = $tw.wiki.generateNewTitle(baseTitle);
+        tiddlerFields.title = $tw.wiki.generateNewTitle(outputTiddlerName);
+        tiddlerFields.execShellCommand = request["command"];
         $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields,
                                             $tw.wiki.getCreationFields(),
                                             $tw.wiki.getModificationFields()));
@@ -655,20 +658,20 @@ module-type: startup
         let execShellCommandError = "";
         let execShellCommandStderr = "";
 
+        
         exec(data["command"], (error, stdout, stderr) => {
             if (error) {
-                console.log(`error: ${error.message}`);
+                // console.log(`error: ${error.message}`);
                 execShellCommandError = error.message;
-                //return;
             }
             if (stderr) {
-                console.log(`stderr: ${stderr}`);
+                // console.log(`stderr: ${stderr}`);
                 execShellCommandStderr = stderr;
-                //return;
             }
-            console.log(`stdout: ${stdout}`);
+            // console.log(`stdout: ${stdout}`);
             execShellCommandOutput = stdout;
-            logExecShellOutputToTiddler("execShellCommand result",
+
+            logExecShellOutputToTiddler(data,
                                         execShellCommandOutput,
                                         execShellCommandError,
                                         execShellCommandStderr);
@@ -690,7 +693,7 @@ module-type: startup
             response.clients.push(client);
         }
         $tw.connections[clientIx].socket.send(JSON.stringify(response));
-        console.log($tw.connections);
+        // console.log($tw.connections);
         console.log("<--");
     }
 
