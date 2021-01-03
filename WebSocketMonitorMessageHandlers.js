@@ -110,14 +110,14 @@ module-type: startup
         var tiddlerFields = {};
         tiddlerFields.type = "text/plain";
         tiddlerFields.text = output;
-        tiddlerFields.execShellCommandError = error;
-        tiddlerFields.execShellCommandStderror = stderr;
+        tiddlerFields["exec-shell-command-error"] = error;
+        tiddlerFields["exec-shell-command-stderror"] = stderr;
 
         let outputTiddlerName = request["outputTiddlerName"] || "execShellCommand result";
 
         // Create a Tiddler containing the execCommand output
         tiddlerFields.title = $tw.wiki.generateNewTitle(outputTiddlerName);
-        tiddlerFields.execShellCommand = request["command"];
+        tiddlerFields["exec-shell-command"] = request["command"];
         $tw.wiki.addTiddler(new $tw.Tiddler(tiddlerFields,
                                             $tw.wiki.getCreationFields(),
                                             $tw.wiki.getModificationFields()));

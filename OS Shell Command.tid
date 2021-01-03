@@ -1,5 +1,5 @@
 created: 20210103111109304
-modified: 20210103132808299
+modified: 20210103134211854
 revision: 0
 tags: gc
 title: OS Shell Command
@@ -36,4 +36,4 @@ type: text/vnd.tiddlywiki
 
 {{delete-the-os-shell-command-results-tiddlers}}
 
-<<list-links "[has[execShellCommand]!sort[created]]">>
+<<list-links "[has[exec-shell-command]!sort[created]]">>

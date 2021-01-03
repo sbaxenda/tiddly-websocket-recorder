@@ -1,5 +1,5 @@
 created: 20210103124634908
-modified: 20210103132311257
+modified: 20210103134441587
 revision: 0
 tags: 
 title: delete-the-os-shell-command-results-tiddlers
@@ -7,7 +7,7 @@ type: text/vnd.tiddlywiki
 
 <$button>
 Delete Result tiddlers!
-<$list filter="[has[execShellCommand]]" variable="tidToDelete">
+<$list filter="[has[exec-shell-command]]" variable="tidToDelete">
 <$action-deletetiddler $tiddler=<<tidToDelete>>/>
 </$list>
 </$button>
