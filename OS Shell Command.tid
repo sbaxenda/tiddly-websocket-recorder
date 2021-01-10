@@ -26,6 +26,8 @@ type: text/vnd.tiddlywiki
 </$set>
 </$set>
 
+</$button> | <$button> refresh tiddler list
+<$action-sendmessage $message="tm-server-refresh" />
 </$button>
 
 </$set>
